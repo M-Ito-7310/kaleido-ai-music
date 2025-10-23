@@ -72,7 +72,8 @@ Next.js 14をベースにしたKaleido AI Musicプロジェクトの開発環境
 - [x] npm run buildでビルド成功を確認
 
 ### Gitコミット
-- [ ] 初回コミット作成(feat(setup): initial Kaleido AI Music project setup)
+- [x] 初回コミット作成(feat(setup): initial Next.js 14 project setup)
+  - Commit Hash: 1de09c3
 
 ## 📦 成果物
 
@@ -143,7 +144,9 @@ Next.js 14をベースにしたKaleido AI Musicプロジェクトの開発環境
 - clsx + tailwind-mergeでクラス名管理
 
 ### Git Commit情報
-- コミット予定: feat(setup): initial Next.js 14 project setup
+- Commit Hash: 1de09c3
+- Commit Message: feat(setup): initial Next.js 14 project setup
+- Commit Date: 2025-10-23 17:20
 
 ### 次のPhaseへの引き継ぎ
 - Phase 2でデータベーススキーマとAPI Routes実装
