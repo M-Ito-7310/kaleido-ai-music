@@ -1,6 +1,6 @@
 import { db } from './index';
 import { music, categories, tags } from './schema';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, and, or, like } from 'drizzle-orm';
 import type { MusicFilter, MusicStats } from '@/types/music';
 import type { NewMusic } from './schema';
 
@@ -9,11 +9,42 @@ import type { NewMusic } from './schema';
  */
 export async function getMusicList(filter: MusicFilter = {}) {
   const {
+    category,
+    tags: tagsList,
+    search,
     sortBy = 'latest',
     limit = 20,
     offset = 0,
   } = filter;
 
+  // WHERE条件を構築
+  const conditions = [eq(music.isPublished, 1)];
+
+  // カテゴリフィルター
+  if (category) {
+    conditions.push(eq(music.category, category));
+  }
+
+  // タグフィルター（配列内のいずれかのタグを含む）
+  if (tagsList && tagsList.length > 0) {
+    // JSONフィールド内の配列に対する検索
+    const tagConditions = tagsList.map((tag) =>
+      sql`${music.tags}::jsonb @> ${JSON.stringify([tag])}::jsonb`
+    );
+    conditions.push(or(...tagConditions)!);
+  }
+
+  // 検索フィルター（タイトルまたはアーティスト名）
+  if (search) {
+    conditions.push(
+      or(
+        like(music.title, `%${search}%`),
+        like(music.artist, `%${search}%`)
+      )!
+    );
+  }
+
+  // ソート順を決定
   let orderBy;
   switch (sortBy) {
     case 'popular':
@@ -31,7 +62,7 @@ export async function getMusicList(filter: MusicFilter = {}) {
   const result = await db
     .select()
     .from(music)
-    .where(eq(music.isPublished, 1))
+    .where(and(...conditions))
     .orderBy(...orderBy)
     .limit(limit)
     .offset(offset);
@@ -105,8 +136,14 @@ export async function getCategories() {
 /**
  * タグ一覧を取得
  */
-export async function getTags() {
-  return await db.select().from(tags);
+export async function getTags(limit?: number) {
+  const query = db.select().from(tags).orderBy(desc(tags.count));
+
+  if (limit) {
+    return await query.limit(limit);
+  }
+
+  return await query;
 }
 
 /**
