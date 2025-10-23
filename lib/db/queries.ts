@@ -1,6 +1,6 @@
 import { db } from './index';
 import { music, categories, tags } from './schema';
-import { eq, desc, asc, like, inArray, sql } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import type { MusicFilter, MusicStats } from '@/types/music';
 import type { NewMusic } from './schema';
 
@@ -9,53 +9,33 @@ import type { NewMusic } from './schema';
  */
 export async function getMusicList(filter: MusicFilter = {}) {
   const {
-    category,
-    tags: filterTags,
-    search,
     sortBy = 'latest',
     limit = 20,
     offset = 0,
   } = filter;
 
-  let query = db.select().from(music).where(eq(music.isPublished, 1));
-
-  // カテゴリフィルター
-  if (category) {
-    query = query.where(eq(music.category, category));
-  }
-
-  // 検索フィルター
-  if (search) {
-    query = query.where(
-      sql`${music.title} ILIKE ${`%${search}%`} OR ${music.artist} ILIKE ${`%${search}%`}`
-    );
-  }
-
-  // タグフィルター（配列の重なりチェック）
-  if (filterTags && filterTags.length > 0) {
-    query = query.where(
-      sql`${music.tags} && ${JSON.stringify(filterTags)}::jsonb`
-    );
-  }
-
-  // ソート
+  let orderBy;
   switch (sortBy) {
     case 'popular':
-      query = query.orderBy(desc(music.playCount), desc(music.createdAt));
+      orderBy = [desc(music.playCount), desc(music.createdAt)];
       break;
     case 'downloads':
-      query = query.orderBy(desc(music.downloadCount), desc(music.createdAt));
+      orderBy = [desc(music.downloadCount), desc(music.createdAt)];
       break;
     case 'latest':
     default:
-      query = query.orderBy(desc(music.createdAt));
+      orderBy = [desc(music.createdAt)];
       break;
   }
 
-  // ページネーション
-  query = query.limit(limit).offset(offset);
+  const result = await db
+    .select()
+    .from(music)
+    .where(eq(music.isPublished, 1))
+    .orderBy(...orderBy)
+    .limit(limit)
+    .offset(offset);
 
-  const result = await query;
   return result;
 }
 
@@ -116,73 +96,32 @@ export async function incrementDownloadCount(id: number) {
 }
 
 /**
- * 音楽統計を取得
+ * カテゴリ一覧を取得
+ */
+export async function getCategories() {
+  return await db.select().from(categories);
+}
+
+/**
+ * タグ一覧を取得
+ */
+export async function getTags() {
+  return await db.select().from(tags);
+}
+
+/**
+ * 音楽統計情報を取得
  */
 export async function getMusicStats(): Promise<MusicStats> {
   const result = await db
     .select({
-      totalPlays: sql<number>`SUM(${music.playCount})`,
-      totalDownloads: sql<number>`SUM(${music.downloadCount})`,
-      totalMusic: sql<number>`COUNT(*)`,
-      averageDuration: sql<number>`AVG(${music.duration})`,
+      totalMusic: sql<number>`count(*)`,
+      totalPlays: sql<number>`coalesce(sum(${music.playCount}), 0)`,
+      totalDownloads: sql<number>`coalesce(sum(${music.downloadCount}), 0)`,
+      averageDuration: sql<number>`coalesce(avg(${music.duration}), 0)`,
     })
     .from(music)
     .where(eq(music.isPublished, 1));
 
-  return {
-    totalPlays: Number(result[0]?.totalPlays || 0),
-    totalDownloads: Number(result[0]?.totalDownloads || 0),
-    totalMusic: Number(result[0]?.totalMusic || 0),
-    averageDuration: Math.round(Number(result[0]?.averageDuration || 0)),
-  };
-}
-
-/**
- * カテゴリ一覧を取得
- */
-export async function getCategories() {
-  return await db.select().from(categories).orderBy(asc(categories.name));
-}
-
-/**
- * カテゴリを作成
- */
-export async function createCategory(data: {
-  name: string;
-  slug: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-}) {
-  const result = await db.insert(categories).values(data).returning();
-  return result[0];
-}
-
-/**
- * タグ一覧を取得（使用頻度順）
- */
-export async function getTags(limit = 50) {
-  return await db.select().from(tags).orderBy(desc(tags.count)).limit(limit);
-}
-
-/**
- * タグを作成または更新
- */
-export async function upsertTag(name: string, slug: string) {
-  // 既存タグを検索
-  const existingTag = await db.select().from(tags).where(eq(tags.slug, slug)).limit(1);
-
-  if (existingTag.length > 0) {
-    // 既存タグのカウントをインクリメント
-    const result = await db
-      .update(tags)
-      .set({ count: sql`${tags.count} + 1` })
-      .where(eq(tags.slug, slug))
-      .returning();
-    return result[0];
-  } else {
-    // 新規タグを作成
-    const result = await db.insert(tags).values({ name, slug, count: 1 }).returning();
-    return result[0];
-  }
+  return result[0] as MusicStats;
 }

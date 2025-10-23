@@ -108,7 +108,7 @@ export async function PUT(
         {
           success: false,
           error: 'Validation error',
-          message: error.errors.map((e) => e.message).join(', '),
+          message: error.issues.map((e) => e.message).join(', '),
         } as ApiResponse,
         { status: 400 }
       );

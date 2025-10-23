@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getTags } from '@/lib/db/queries';
 import type { ApiResponse } from '@/types/api';
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '50', 10);
 
-    const tagsList = await getTags(limit);
+    const tagsList = await getTags();
 
     return NextResponse.json({
       success: true,

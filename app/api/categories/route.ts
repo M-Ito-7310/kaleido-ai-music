@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getCategories } from '@/lib/db/queries';
 import type { ApiResponse } from '@/types/api';

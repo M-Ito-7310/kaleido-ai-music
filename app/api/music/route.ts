@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getMusicList, createMusic } from '@/lib/db/queries';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Validation error',
-          message: error.errors.map((e) => e.message).join(', '),
+          message: error.issues.map((e) => e.message).join(', '),
         } as ApiResponse,
         { status: 400 }
       );
