@@ -144,8 +144,12 @@ Next.js 14をベースにしたKaleido AI Musicプロジェクトの開発環境
 - clsx + tailwind-mergeでクラス名管理
 
 ### Git Commit情報
-- Commit Hash: 1de09c3
-- Commit Message: feat(setup): initial Next.js 14 project setup
+- Initial Setup Commit:
+  - Hash: 1de09c3
+  - Message: feat(setup): initial Next.js 14 project setup
+- Documentation Update Commit:
+  - Hash: 93d2d21
+  - Message: docs(phase-1): update ticket status to completed
 - Commit Date: 2025-10-23 17:20
 
 ### 次のPhaseへの引き継ぎ
