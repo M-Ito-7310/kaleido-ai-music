@@ -1,0 +1,56 @@
+{
+  "name": "kaleido-ai-music",
+  "version": "0.1.0",
+  "description": "AI-generated music library and showcase platform",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "@vercel/blob": "^2.0.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.33.0",
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.24.0",
+    "eslint": "^8",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8",
+    "prettier": "^3.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "ai-music",
+    "music-library",
+    "nextjs",
+    "typescript",
+    "music-platform"
+  ],
+  "author": "",
+  "license": "MIT"
+}

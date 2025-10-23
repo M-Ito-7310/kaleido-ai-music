@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/mitoi/Desktop/Projects/nocode-ui-builder/**)",
+      "Bash(npm install)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
