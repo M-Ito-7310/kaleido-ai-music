@@ -11,6 +11,33 @@
     @apply bg-white text-gray-900;
   }
 
+  /* フォントサイズの最適化 */
+  html {
+    @apply text-base;
+  }
+
+  h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl font-bold;
+  }
+
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl font-semibold;
+  }
+
+  /* モバイルでの読みやすさ向上 */
+  p {
+    @apply leading-relaxed;
+  }
+
+  /* タッチターゲットの最小サイズ確保（44x44px） */
+  button, a {
+    @apply min-h-[44px];
+  }
+
   /* カスタムスクロールバー */
   ::-webkit-scrollbar {
     @apply w-2;
@@ -30,6 +57,22 @@
 }
 
 @layer utilities {
+  /* タッチ時のフィードバック */
+  .touch-feedback {
+    @apply active:scale-95 transition-transform;
+  }
+
+  /* タッチハイライトの削除 */
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* スムーズスクロール */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* アニメーション */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;

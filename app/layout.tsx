@@ -8,6 +8,7 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+  preload: true,
 });
 
 const poppins = Poppins({
@@ -15,6 +16,7 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   variable: '--font-poppins',
   display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -27,6 +29,20 @@ export const metadata: Metadata = {
     title: 'Kaleido AI Music',
     description: 'AI生成音楽ライブラリプラットフォーム',
     type: 'website',
+  },
+  // PWA対応
+  manifest: '/manifest.json',
+  themeColor: '#0ea5e9',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Kaleido Music',
   },
 };
 

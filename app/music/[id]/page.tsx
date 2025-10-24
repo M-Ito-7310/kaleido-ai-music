@@ -1,12 +1,25 @@
 export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import dynamicImport from 'next/dynamic';
 import { Clock, Calendar, Download, TrendingUp, Sparkles } from 'lucide-react';
 import { getMusicById } from '@/lib/db/queries';
 import { formatDuration } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { MusicPlayer } from '@/components/music/MusicPlayer';
+
+// MusicPlayerを動的にインポート（クライアントサイドのみ）
+const MusicPlayer = dynamicImport(
+  () => import('@/components/music/MusicPlayer').then((mod) => mod.MusicPlayer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-lg bg-gray-100 p-6 animate-pulse">
+        <div className="h-32 bg-gray-200 rounded" />
+      </div>
+    ),
+  }
+);
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const music = await getMusicById(parseInt(params.id, 10));
@@ -41,8 +54,10 @@ export default async function MusicDetailPage({ params }: { params: { id: string
                 src={music.imageUrl}
                 alt={music.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
+                quality={90}
               />
             </div>
 
