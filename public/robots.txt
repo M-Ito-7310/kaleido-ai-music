@@ -5,4 +5,4 @@ Allow: /
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://kaleidaimusic.kaleidofuture.com/sitemap.xml
+Sitemap: https://kaleidoaimusic.kaleidofuture.com/sitemap.xml

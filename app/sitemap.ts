@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://kaleidaimusic.kaleidofuture.com';
+  const baseUrl = 'https://kaleidoaimusic.kaleidofuture.com';
 
   return [
     {
