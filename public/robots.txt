@@ -1,0 +1,8 @@
+# Kaleido AI Music - Robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://kaleido-ai-music.vercel.app/sitemap.xml

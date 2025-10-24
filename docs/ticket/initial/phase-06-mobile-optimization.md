@@ -198,7 +198,7 @@
 - **app/layout.tsx更新**: PWAメタデータ追加(viewport, themeColor, appleWebApp)、フォントpreload設定
 
 ### Git commit情報
-- コミットハッシュ: (次のステップで作成)
+- コミットハッシュ: 6a4d603
 - コミットメッセージ: feat(mobile): optimize for mobile devices
 
 ### 次のPhaseへの引き継ぎ

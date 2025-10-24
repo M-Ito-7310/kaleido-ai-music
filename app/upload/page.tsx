@@ -7,6 +7,9 @@ export const metadata = {
   description: 'AI生成音楽をアップロードして、多くの人に聴いてもらいましょう。',
 };
 
+// 動的レンダリングを強制（ビルド時のプリレンダリングを無効化）
+export const dynamic = 'force-dynamic';
+
 export default async function UploadPage() {
   const categories = await getCategories();
 
