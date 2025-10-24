@@ -29,13 +29,13 @@ export const metadata: Metadata = {
   keywords: ['AI音楽', 'AI Music', 'Suno AI', 'Udio', '音楽ライブラリ', '無料音楽'],
   authors: [{ name: 'Kaleido Future' }],
   creator: 'Kaleido Future',
-  metadataBase: new URL('https://kaleido-ai-music.vercel.app'),
+  metadataBase: new URL('https://kaleidaimusic.kaleidofuture.com'),
   openGraph: {
     title: 'Kaleido AI Music - AI生成音楽ライブラリ',
     description: 'AI生成音楽を展示・共有できるプラットフォーム',
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://kaleido-ai-music.vercel.app',
+    url: 'https://kaleidaimusic.kaleidofuture.com',
     siteName: 'Kaleido AI Music',
     images: [
       {

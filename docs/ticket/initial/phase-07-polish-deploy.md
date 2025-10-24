@@ -221,7 +221,7 @@
 - アクセシビリティのためにfocus-visibleを使用し、キーボードナビゲーションを改善
 
 **Git Commit情報:**
-- コミットハッシュ: （次のステップで作成）
+- コミットハッシュ: 15a6353
 - コミットメッセージ: "feat(deploy): finalize and prepare for Vercel deployment"
 
 **次のPhaseへの引き継ぎ事項:**
