@@ -81,6 +81,24 @@ export function Header() {
             >
               このサイトについて
             </Link>
+
+            {/* 法的情報セクション */}
+            <div className="border-t border-gray-200 my-2 pt-2">
+              <Link
+                href="/terms"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                利用規約
+              </Link>
+              <Link
+                href="/privacy"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                プライバシーポリシー
+              </Link>
+            </div>
           </div>
         </div>
       )}
