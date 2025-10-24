@@ -1,39 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { incrementPlayCount } from '@/lib/db/queries';
-import type { ApiResponse } from '@/types/api';
 
-// POST /api/music/[id]/play - 再生回数をインクリメント
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id, 10);
+    const musicId = parseInt(params.id, 10);
 
-    if (isNaN(id)) {
+    if (isNaN(musicId)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid music ID',
-        } as ApiResponse,
+        { success: false, error: 'Invalid music ID' },
         { status: 400 }
       );
     }
 
-    await incrementPlayCount(id);
+    // 再生回数をインクリメント
+    await incrementPlayCount(musicId);
 
     return NextResponse.json({
       success: true,
       message: 'Play count incremented',
-    } as ApiResponse);
+    });
   } catch (error) {
-    console.error('Error incrementing play count:', error);
+    console.error('Play tracking error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to increment play count',
+        error: 'Failed to track play',
         message: error instanceof Error ? error.message : 'Unknown error',
-      } as ApiResponse,
+      },
       { status: 500 }
     );
   }

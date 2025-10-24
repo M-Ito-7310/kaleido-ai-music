@@ -1,15 +1,21 @@
 import { put, del } from '@vercel/blob';
 
-/**
- * 音楽ファイルをアップロード
- */
+const MAX_AUDIO_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+
 export async function uploadMusic(file: File): Promise<string> {
+  // ファイルタイプチェック
   if (!file.type.startsWith('audio/')) {
-    throw new Error('File must be an audio file');
+    throw new Error('音楽ファイル形式が正しくありません');
+  }
+
+  // ファイルサイズチェック
+  if (file.size > MAX_AUDIO_SIZE) {
+    throw new Error('音楽ファイルのサイズは50MB以下にしてください');
   }
 
   const timestamp = Date.now();
-  const filename = `music/${timestamp}-${file.name}`;
+  const filename = `music/${timestamp}-${sanitizeFilename(file.name)}`;
 
   const blob = await put(filename, file, {
     access: 'public',
@@ -19,16 +25,19 @@ export async function uploadMusic(file: File): Promise<string> {
   return blob.url;
 }
 
-/**
- * 画像ファイルをアップロード
- */
 export async function uploadImage(file: File): Promise<string> {
+  // ファイルタイプチェック
   if (!file.type.startsWith('image/')) {
-    throw new Error('File must be an image file');
+    throw new Error('画像ファイル形式が正しくありません');
+  }
+
+  // ファイルサイズチェック
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error('画像ファイルのサイズは10MB以下にしてください');
   }
 
   const timestamp = Date.now();
-  const filename = `images/${timestamp}-${file.name}`;
+  const filename = `images/${timestamp}-${sanitizeFilename(file.name)}`;
 
   const blob = await put(filename, file, {
     access: 'public',
@@ -38,24 +47,11 @@ export async function uploadImage(file: File): Promise<string> {
   return blob.url;
 }
 
-/**
- * ファイルを削除
- */
 export async function deleteFile(url: string): Promise<void> {
   await del(url);
 }
 
-/**
- * ファイルサイズをバリデーション
- */
-export function validateFileSize(file: File, maxSizeMB: number): boolean {
-  const maxSizeBytes = maxSizeMB * 1024 * 1024;
-  return file.size <= maxSizeBytes;
-}
-
-/**
- * ファイルタイプをバリデーション
- */
-export function validateFileType(file: File, allowedTypes: string[]): boolean {
-  return allowedTypes.some((type) => file.type.startsWith(type));
+// ファイル名のサニタイズ
+function sanitizeFilename(filename: string): string {
+  return filename.replace(/[^a-zA-Z0-9.-]/g, '_');
 }

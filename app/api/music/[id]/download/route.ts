@@ -1,39 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { incrementDownloadCount } from '@/lib/db/queries';
-import type { ApiResponse } from '@/types/api';
 
-// POST /api/music/[id]/download - ダウンロード回数をインクリメント
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id, 10);
+    const musicId = parseInt(params.id, 10);
 
-    if (isNaN(id)) {
+    if (isNaN(musicId)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid music ID',
-        } as ApiResponse,
+        { success: false, error: 'Invalid music ID' },
         { status: 400 }
       );
     }
 
-    await incrementDownloadCount(id);
+    // ダウンロード数をインクリメント
+    await incrementDownloadCount(musicId);
 
     return NextResponse.json({
       success: true,
       message: 'Download count incremented',
-    } as ApiResponse);
+    });
   } catch (error) {
-    console.error('Error incrementing download count:', error);
+    console.error('Download tracking error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to increment download count',
+        error: 'Failed to track download',
         message: error instanceof Error ? error.message : 'Unknown error',
-      } as ApiResponse,
+      },
       { status: 500 }
     );
   }
