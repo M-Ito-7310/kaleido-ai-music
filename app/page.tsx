@@ -26,9 +26,10 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/upload"
-                className="text-base font-semibold leading-7 text-gray-900 hover:text-primary-600 transition-colors"
+                className="rounded-lg bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors flex items-center gap-2"
               >
-                音楽をアップロード <span aria-hidden="true">→</span>
+                音楽をアップロード
+                <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
           </div>
