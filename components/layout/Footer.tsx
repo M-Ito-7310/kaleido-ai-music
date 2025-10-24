@@ -32,7 +32,7 @@ export function Footer() {
             {/* SNSアイコン */}
             <div className="flex gap-4">
               <a
-                href="https://github.com"
+                href="https://github.com/M-Ito-7310/kaleido-ai-music"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gray-600"
@@ -76,7 +76,7 @@ export function Footer() {
               </p>
               <div className="mt-6 flex gap-4">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/M-Ito-7310/kaleido-ai-music"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gray-600"
