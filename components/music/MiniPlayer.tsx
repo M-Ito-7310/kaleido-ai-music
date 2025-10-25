@@ -78,7 +78,7 @@ export function MiniPlayer({
         onDragEnd={handleDragEnd}
         style={{ x, opacity }}
         onClick={handleClick}
-        className="bg-white/95 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden cursor-pointer pointer-events-auto"
+        className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden cursor-pointer pointer-events-auto"
       >
         <div className="flex items-center gap-3 p-3">
           {/* アルバムアート */}
@@ -97,8 +97,8 @@ export function MiniPlayer({
 
           {/* トラック情報 */}
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-gray-900 truncate">{track.title}</p>
-            <p className="text-xs text-gray-600 truncate">{track.artist}</p>
+            <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">{track.title}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{track.artist}</p>
           </div>
 
           {/* コントロールボタン */}
@@ -113,7 +113,7 @@ export function MiniPlayer({
                 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-primary-600 transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 aria-label="前の曲"
               >
                 <SkipBack className="w-5 h-5" />
@@ -129,7 +129,7 @@ export function MiniPlayer({
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 text-white shadow-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 dark:bg-primary-500 text-white shadow-lg"
               aria-label={isPlaying ? '一時停止' : '再生'}
               aria-pressed={isPlaying}
             >
@@ -150,7 +150,7 @@ export function MiniPlayer({
                 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-primary-600 transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 aria-label="次の曲"
               >
                 <SkipForward className="w-5 h-5" />
@@ -165,7 +165,7 @@ export function MiniPlayer({
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors ml-2"
+              className="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors ml-2"
               aria-label="閉じる"
             >
               <X className="w-5 h-5" />
@@ -180,7 +180,7 @@ export function MiniPlayer({
             animate={{ opacity: 1 }}
             className="absolute bottom-1 left-1/2 transform -translate-x-1/2"
           >
-            <p className="text-xs text-gray-500">← スワイプで曲を切り替え →</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">← スワイプで曲を切り替え →</p>
           </motion.div>
         )}
       </motion.div>

@@ -4,11 +4,11 @@
 
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-gray-200 dark:border-gray-700;
   }
 
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
   }
 
   /* フォントサイズの最適化 */
@@ -44,15 +44,15 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-800;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-gray-400 dark:bg-gray-500;
   }
 }
 

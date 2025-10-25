@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PlayerProvider } from '@/lib/contexts/PlayerContext';
 import { GlobalPlayer } from '@/components/music/GlobalPlayer';
+import { ThemeProvider } from 'next-themes';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -89,14 +90,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja" className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="ja" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <PlayerProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <GlobalPlayer />
-        </PlayerProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
+          <PlayerProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+            <GlobalPlayer />
+          </PlayerProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

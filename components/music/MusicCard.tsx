@@ -23,10 +23,10 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
         transition={{ duration: 0.3, delay: index * 0.05 }}
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg hover:border-primary-300"
+        className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-600"
       >
         {/* サムネイル */}
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+        <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
           <Image
             src={music.imageUrl}
             alt={music.title}
@@ -41,7 +41,7 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
           </div>
           {/* カテゴリバッジ */}
           <div className="absolute top-2 left-2">
-            <span className="inline-flex items-center rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-medium text-gray-800 backdrop-blur-sm">
+            <span className="inline-flex items-center rounded-full bg-white/90 dark:bg-gray-800/90 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:text-gray-200 backdrop-blur-sm">
               {music.category}
             </span>
           </div>
@@ -49,13 +49,13 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
 
         {/* 情報 */}
         <div className="flex flex-1 flex-col p-4">
-          <h3 className="text-base font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white line-clamp-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {music.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-600 line-clamp-1">{music.artist}</p>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{music.artist}</p>
 
           {/* メタデータ */}
-          <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
+          <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
               <span>{formatDuration(music.duration)}</span>
