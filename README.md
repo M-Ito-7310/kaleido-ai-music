@@ -100,7 +100,8 @@ DATABASE_URL="postgresql://user:password@endpoint.neon.tech/dbname?sslmode=requi
 # Vercel Blob Storage トークン
 BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
 
-# アプリケーションURL
+# アプリケーションURL（オプション）
+# 注: 現在未使用。将来的にOGPメタタグ生成や絶対URL生成時に使用予定
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
