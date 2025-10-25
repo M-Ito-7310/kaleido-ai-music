@@ -85,10 +85,10 @@ npm install
 
 #### 3. 環境変数を設定
 
-`.env.local.example` を `.env.local` にコピーして、必要な値を設定します。
+`.env.example` を `.env.local` にコピーして、必要な値を設定します。
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 **必須環境変数:**
@@ -97,7 +97,7 @@ cp .env.local.example .env.local
 # Neon PostgreSQL接続文字列
 DATABASE_URL="postgresql://user:password@endpoint.neon.tech/dbname?sslmode=require"
 
-# Vercel Blob Storage トークン
+# Vercel Blob Storage トークン（必須）
 BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
 
 # アプリケーションURL（オプション）
