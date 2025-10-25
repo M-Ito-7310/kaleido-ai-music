@@ -2,16 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { AudioPlayer } from '@/lib/audio/player';
 import { formatDuration } from '@/lib/utils';
+import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
+import { createGradientFromPalette, getContrastColor } from '@/lib/colors/extractColors';
 
 interface MusicPlayerProps {
   audioUrl: string;
   title: string;
   artist: string;
+  imageUrl?: string;
 }
 
-export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
+export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -21,6 +25,9 @@ export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
 
   const playerRef = useRef<AudioPlayer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ダイナミックカラー抽出
+  const { colors } = useDynamicColors(imageUrl);
 
   // プレイヤー初期化
   useEffect(() => {
@@ -100,20 +107,39 @@ export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
     setIsMuted(!isMuted);
   };
 
+  // カラーパレットから背景スタイルとテキストカラーを生成
+  const backgroundStyle = colors
+    ? { background: createGradientFromPalette(colors), transition: 'background 0.5s ease' }
+    : {};
+  const textColor = colors ? getContrastColor(colors.dominant) : 'black';
+  const textColorClass = textColor === 'white' ? 'text-white' : 'text-gray-900';
+  const secondaryTextClass = textColor === 'white' ? 'text-white/80' : 'text-gray-600';
+
   if (isLoading) {
     return (
-      <div className="rounded-lg bg-gray-100 p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="rounded-lg bg-gray-100 p-6"
+      >
         <p className="text-center text-gray-600">読み込み中...</p>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="rounded-lg bg-gradient-to-br from-primary-50 to-accent-light/20 p-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-lg p-6 shadow-lg"
+      style={backgroundStyle}
+    >
       {/* 曲情報 */}
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        <p className="text-sm text-gray-600">{artist}</p>
+        <h3 className={`text-lg font-semibold ${textColorClass}`}>{title}</h3>
+        <p className={`text-sm ${secondaryTextClass}`}>{artist}</p>
       </div>
 
       {/* シークバー */}
@@ -124,9 +150,14 @@ export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
           max={duration}
           value={currentTime}
           onChange={handleSeek}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+          style={{ accentColor: colors?.vibrant || '#0284c7' }}
+          aria-label="シークバー"
+          aria-valuemin={0}
+          aria-valuemax={duration}
+          aria-valuenow={currentTime}
         />
-        <div className="flex justify-between text-xs text-gray-600 mt-1">
+        <div className={`flex justify-between text-xs ${secondaryTextClass} mt-1`}>
           <span>{formatDuration(currentTime)}</span>
           <span>{formatDuration(duration)}</span>
         </div>
@@ -135,26 +166,38 @@ export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
       {/* コントロール */}
       <div className="flex items-center justify-between">
         {/* 再生ボタン */}
-        <button
+        <motion.button
           onClick={togglePlay}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-white shadow-md hover:bg-primary-500 transition-colors"
+          className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all ${textColorClass}`}
+          style={{ backgroundColor: colors?.vibrant || '#0284c7' }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={isPlaying ? '一時停止' : '再生'}
+          aria-pressed={isPlaying}
         >
           {isPlaying ? (
             <Pause className="h-6 w-6" fill="currentColor" />
           ) : (
             <Play className="h-6 w-6 ml-0.5" fill="currentColor" />
           )}
-        </button>
+        </motion.button>
 
         {/* ボリュームコントロール */}
         <div className="flex items-center gap-2">
-          <button onClick={toggleMute} className="text-gray-600 hover:text-gray-900">
+          <motion.button
+            onClick={toggleMute}
+            className={secondaryTextClass}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            aria-label={isMuted ? 'ミュート解除' : 'ミュート'}
+            aria-pressed={isMuted}
+          >
             {isMuted || volume === 0 ? (
               <VolumeX className="h-5 w-5" />
             ) : (
               <Volume2 className="h-5 w-5" />
             )}
-          </button>
+          </motion.button>
           <input
             type="range"
             min="0"
@@ -162,10 +205,15 @@ export function MusicPlayer({ audioUrl, title, artist }: MusicPlayerProps) {
             step="0.01"
             value={volume}
             onChange={handleVolumeChange}
-            className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+            className="w-24 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+            style={{ accentColor: colors?.vibrant || '#0284c7' }}
+            aria-label="ボリューム"
+            aria-valuemin={0}
+            aria-valuemax={1}
+            aria-valuenow={volume}
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

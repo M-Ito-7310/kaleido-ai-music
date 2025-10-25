@@ -18,8 +18,8 @@ export function MusicGrid({ musicList }: MusicGridProps) {
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {musicList.map((music) => (
-        <MusicCard key={music.id} music={music} />
+      {musicList.map((music, index) => (
+        <MusicCard key={music.id} music={music} index={index} playlist={musicList} />
       ))}
     </div>
   );

@@ -139,6 +139,7 @@ export default async function MusicDetailPage({ params }: { params: { id: string
               audioUrl={music.audioUrl}
               title={music.title}
               artist={music.artist}
+              imageUrl={music.imageUrl}
             />
           </div>
         </div>
