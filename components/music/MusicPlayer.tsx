@@ -7,6 +7,8 @@ import { AudioPlayer } from '@/lib/audio/player';
 import { formatDuration } from '@/lib/utils';
 import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
 import { createGradientFromPalette, getContrastColor } from '@/lib/colors/extractColors';
+import { AudioVisualizer } from './AudioVisualizer';
+import WaveSurfer from 'wavesurfer.js';
 
 interface MusicPlayerProps {
   audioUrl: string;
@@ -24,6 +26,7 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
   const [isLoading, setIsLoading] = useState(true);
 
   const playerRef = useRef<AudioPlayer | null>(null);
+  const wavesurferRef = useRef<WaveSurfer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // ダイナミックカラー抽出
@@ -52,6 +55,12 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
       intervalRef.current = setInterval(() => {
         const time = playerRef.current?.getCurrentTime() || 0;
         setCurrentTime(time);
+
+        // WaveSurferと同期
+        if (wavesurferRef.current && duration > 0) {
+          const progress = time / duration;
+          wavesurferRef.current.seekTo(progress);
+        }
 
         if (time >= duration) {
           setIsPlaying(false);
@@ -83,8 +92,7 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
     setIsPlaying(!isPlaying);
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
+  const handleSeek = (time: number) => {
     setCurrentTime(time);
     playerRef.current?.seek(time);
   };
@@ -107,6 +115,10 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
     setIsMuted(!isMuted);
   };
 
+  const handleWaveSurferReady = (ws: WaveSurfer) => {
+    wavesurferRef.current = ws;
+  };
+
   // カラーパレットから背景スタイルとテキストカラーを生成
   const backgroundStyle = colors
     ? { background: createGradientFromPalette(colors), transition: 'background 0.5s ease' }
@@ -121,9 +133,9 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-lg bg-gray-100 p-6"
+        className="rounded-lg bg-gray-100 dark:bg-gray-800 p-6"
       >
-        <p className="text-center text-gray-600">読み込み中...</p>
+        <p className="text-center text-gray-600 dark:text-gray-400">読み込み中...</p>
       </motion.div>
     );
   }
@@ -142,20 +154,17 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
         <p className={`text-sm ${secondaryTextClass}`}>{artist}</p>
       </div>
 
-      {/* シークバー */}
+      {/* 音声ビジュアライザー */}
       <div className="mb-4">
-        <input
-          type="range"
-          min="0"
-          max={duration}
-          value={currentTime}
-          onChange={handleSeek}
-          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
-          style={{ accentColor: colors?.vibrant || '#0284c7' }}
-          aria-label="シークバー"
-          aria-valuemin={0}
-          aria-valuemax={duration}
-          aria-valuenow={currentTime}
+        <AudioVisualizer
+          audioUrl={audioUrl}
+          waveColor={colors?.muted || '#94A3B8'}
+          progressColor={colors?.vibrant || '#0284c7'}
+          height={80}
+          barWidth={2}
+          barGap={1}
+          onReady={handleWaveSurferReady}
+          onSeek={handleSeek}
         />
         <div className={`flex justify-between text-xs ${secondaryTextClass} mt-1`}>
           <span>{formatDuration(currentTime)}</span>
