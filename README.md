@@ -141,24 +141,42 @@ npm run dev
 kaleido-ai-music/
 ├── docs/                 # ドキュメント
 │   ├── idea/             # 初期設計・アイデア
-│   └── implementation/   # 実装記録
-├── src/
-│   ├── app/              # Next.js App Router
-│   │   ├── api/          # API Routes
-│   │   ├── library/      # 音楽ライブラリページ
-│   │   ├── music/        # 音楽詳細ページ
-│   │   └── upload/       # アップロードページ
-│   ├── components/       # Reactコンポーネント
-│   │   ├── music/        # 音楽関連コンポーネント
-│   │   ├── layout/       # レイアウトコンポーネント
-│   │   ├── filters/      # フィルター関連
-│   │   └── ui/           # 共通UIコンポーネント
-│   ├── lib/              # ユーティリティ・DB
-│   │   ├── db/           # データベース設定・スキーマ
-│   │   ├── storage/      # ファイルストレージ
-│   │   └── utils.ts      # ユーティリティ関数
-│   └── types/            # TypeScript型定義
+│   ├── implementation/   # 実装記録
+│   └── ticket/           # チケット管理
+├── app/                  # Next.js App Router
+│   ├── api/              # API Routes
+│   │   ├── music/        # 音楽API
+│   │   ├── categories/   # カテゴリAPI
+│   │   ├── tags/         # タグAPI
+│   │   └── upload/       # アップロードAPI
+│   ├── library/          # 音楽ライブラリページ
+│   ├── music/[id]/       # 音楽詳細ページ
+│   ├── upload/           # アップロードページ
+│   ├── about/            # Aboutページ
+│   ├── privacy/          # プライバシーポリシー
+│   ├── terms/            # 利用規約
+│   └── (ルートページ他)
+├── components/           # Reactコンポーネント
+│   ├── music/            # 音楽関連コンポーネント
+│   ├── layout/           # レイアウトコンポーネント
+│   ├── filters/          # フィルター関連
+│   ├── upload/           # アップロード関連
+│   └── ui/               # 共通UIコンポーネント
+├── lib/                  # ユーティリティ・DB
+│   ├── db/               # データベース設定・スキーマ
+│   ├── storage/          # ファイルストレージ
+│   ├── hooks/            # カスタムフック
+│   ├── audio/            # 音楽再生ユーティリティ
+│   ├── env.ts            # 環境変数検証
+│   └── utils.ts          # ユーティリティ関数
+├── types/                # TypeScript型定義
+│   ├── api.ts            # API関連の型
+│   └── music.ts          # 音楽関連の型
 ├── public/               # 静的ファイル
+│   ├── audio/            # 音楽ファイル（サンプル）
+│   ├── images/           # 画像ファイル
+│   ├── manifest.json     # PWAマニフェスト
+│   └── robots.txt        # SEO設定
 ├── .env.local.example    # 環境変数テンプレート
 ├── next.config.js        # Next.js設定
 ├── tailwind.config.ts    # Tailwind CSS設定
