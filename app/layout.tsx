@@ -3,6 +3,8 @@ import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { PlayerProvider } from '@/lib/contexts/PlayerContext';
+import { GlobalPlayer } from '@/components/music/GlobalPlayer';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -89,9 +91,12 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${inter.variable} ${poppins.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <PlayerProvider>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+          <GlobalPlayer />
+        </PlayerProvider>
       </body>
     </html>
   );
