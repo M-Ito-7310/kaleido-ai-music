@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ImageOff } from 'lucide-react';
 
 interface ImageWithPlaceholderProps {
@@ -13,6 +14,7 @@ interface ImageWithPlaceholderProps {
   sizes?: string;
   priority?: boolean;
   className?: string;
+  quality?: number;
 }
 
 export function ImageWithPlaceholder({
@@ -24,6 +26,7 @@ export function ImageWithPlaceholder({
   sizes,
   priority,
   className,
+  quality = 85,
 }: ImageWithPlaceholderProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,24 +41,39 @@ export function ImageWithPlaceholder({
 
   return (
     <>
-      {loading && (
-        <div className="absolute inset-0 animate-pulse bg-gray-200" />
-      )}
-      <Image
-        src={src}
-        alt={alt}
-        fill={fill}
-        width={width}
-        height={height}
-        sizes={sizes}
-        priority={priority}
-        className={className}
-        onLoad={() => setLoading(false)}
-        onError={() => {
-          setError(true);
-          setLoading(false);
-        }}
-      />
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 to-gray-300"
+          />
+        )}
+      </AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loading ? 0 : 1 }}
+        transition={{ duration: 0.3 }}
+        className="h-full w-full"
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill={fill}
+          width={width}
+          height={height}
+          sizes={sizes}
+          priority={priority}
+          quality={quality}
+          className={className}
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setError(true);
+            setLoading(false);
+          }}
+        />
+      </motion.div>
     </>
   );
 }
