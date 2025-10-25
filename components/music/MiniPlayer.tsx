@@ -78,12 +78,15 @@ export function MiniPlayer({
         onDragEnd={handleDragEnd}
         style={{ x, opacity }}
         onClick={handleClick}
-        className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden cursor-pointer pointer-events-auto"
+        className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl backdrop-saturate-150 shadow-2xl rounded-2xl overflow-hidden cursor-pointer pointer-events-auto border border-white/20 dark:border-gray-700/50"
       >
-        <div className="flex items-center gap-3 p-3">
+        {/* グローエフェクト */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-accent-DEFAULT/10 pointer-events-none" />
+        
+        <div className="relative flex items-center gap-3 p-3">
           {/* アルバムアート */}
           <motion.div
-            className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-md"
+            className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
             whileHover={{ scale: 1.05 }}
           >
             <Image
@@ -97,8 +100,12 @@ export function MiniPlayer({
 
           {/* トラック情報 */}
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">{track.title}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{track.artist}</p>
+            <p className="font-semibold text-sm text-gray-900 dark:text-white truncate drop-shadow-sm">
+              {track.title}
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+              {track.artist}
+            </p>
           </div>
 
           {/* コントロールボタン */}
@@ -129,7 +136,7 @@ export function MiniPlayer({
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 dark:bg-primary-500 text-white shadow-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 dark:bg-primary-500 text-white shadow-lg shadow-primary-500/50"
               aria-label={isPlaying ? '一時停止' : '再生'}
               aria-pressed={isPlaying}
             >
@@ -180,7 +187,9 @@ export function MiniPlayer({
             animate={{ opacity: 1 }}
             className="absolute bottom-1 left-1/2 transform -translate-x-1/2"
           >
-            <p className="text-xs text-gray-500 dark:text-gray-400">← スワイプで曲を切り替え →</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 drop-shadow">
+              ← スワイプで曲を切り替え →
+            </p>
           </motion.div>
         )}
       </motion.div>
