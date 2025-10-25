@@ -1,6 +1,32 @@
 # Kaleido AI Music
 
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 AI生成音楽を展示・ダウンロードできる音楽ライブラリプラットフォーム
+
+**[ライブデモを見る](https://kaleidoaimusic.kaleidofuture.com/)** | [ドキュメント](#ドキュメント) | [コントリビューション](#コントリビューション)
+
+## 目次
+
+- [概要](#概要)
+- [主な機能](#主な機能)
+- [技術スタック](#技術スタック)
+- [セットアップ](#セットアップ)
+- [スクリプト](#スクリプト)
+- [プロジェクト構造](#プロジェクト構造)
+- [ドキュメント](#ドキュメント)
+- [デプロイ](#デプロイ)
+- [開発状況](#開発状況)
+- [トラブルシューティング](#トラブルシューティング)
+- [FAQ](#faq)
+- [ロードマップ](#ロードマップ)
+- [コントリビューション](#コントリビューション)
+- [ライセンス](#ライセンス)
+- [参考プロジェクト](#参考プロジェクト)
+- [お問い合わせ](#お問い合わせ)
 
 ## 概要
 
@@ -47,7 +73,7 @@ Kaleido AI Musicは、外部AIプラットフォーム(Suno AI、Udio等)で生�
 #### 1. リポジトリをクローン
 
 ```bash
-git clone https://github.com/yourusername/kaleido-ai-music.git
+git clone https://github.com/M-Ito-7310/kaleido-ai-music.git
 cd kaleido-ai-music
 ```
 
@@ -152,7 +178,7 @@ kaleido-ai-music/
 
 ### Vercel(推奨)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/kaleido-ai-music)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/M-Ito-7310/kaleido-ai-music)
 
 1. Vercelアカウントを作成
 2. リポジトリをインポート
@@ -161,14 +187,225 @@ kaleido-ai-music/
 
 ## 開発状況
 
-**現在のフェーズ**: プロトタイプ設計完了、実装開始前
+**現在のフェーズ**: 基本機能実装完了
 
 | 項目 | 進捗 |
 |------|------|
 | 設計ドキュメント | 100% ✅ |
 | データベーススキーマ | 100% ✅ |
 | UIデザイン方針 | 100% ✅ |
-| 機能実装 | 0% 🚧 |
+| 基本UI実装 | 100% ✅ |
+| 音楽再生機能 | 100% ✅ |
+| 検索・フィルター | 100% ✅ |
+| ダウンロード機能 | 100% ✅ |
+| モバイル最適化 | 100% ✅ |
+| アップロード機能 | 🚧 作業中 |
+
+**デプロイ済み**: [https://kaleidoaimusic.kaleidofuture.com/](https://kaleidoaimusic.kaleidofuture.com/)
+
+## トラブルシューティング
+
+### よくある問題と解決方法
+
+#### データベース接続エラー
+
+**問題**: `Error: connection to database failed`
+
+**解決方法**:
+
+1. `.env.local` ファイルに `DATABASE_URL` が正しく設定されているか確認
+2. Neon PostgreSQLダッシュボードでデータベースが起動しているか確認
+3. 接続文字列に `?sslmode=require` が含まれているか確認
+
+```bash
+# 正しい形式の例
+DATABASE_URL="postgresql://user:password@ep-xxx-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require"
+```
+
+#### Vercel Blob Storageエラー
+
+**問題**: `Error: BLOB_READ_WRITE_TOKEN is not defined`
+
+**解決方法**:
+
+1. Vercelダッシュボードで Blob Storage を有効化
+2. `.env.local` に正しいトークンを設定
+3. ローカル開発の場合、Vercel CLIで `vercel env pull .env.local` を実行
+
+#### ビルドエラー (Type errors)
+
+**問題**: `Type error: Cannot find module ...`
+
+**解決方法**:
+
+```bash
+# node_modulesを削除して再インストール
+rm -rf node_modules package-lock.json
+npm install
+
+# 型チェック実行
+npm run type-check
+```
+
+#### 音楽ファイルが再生されない
+
+**問題**: プレイヤーが動作しない、または音が出ない
+
+**解決方法**:
+
+1. ブラウザのコンソールでエラーを確認
+2. 音楽ファイルのURLが正しくアクセスできるか確認
+3. ブラウザが対応している音声フォーマット(MP3, WAV)か確認
+4. CORS設定を確認 (Vercel Blob Storageは自動的に設定されます)
+
+#### 開発サーバーが起動しない
+
+**問題**: `Port 3000 is already in use`
+
+**解決方法**:
+
+```bash
+# 別のポートで起動
+PORT=3001 npm run dev
+
+# または既存のプロセスを終了
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+
+# Mac/Linux
+lsof -ti:3000 | xargs kill -9
+```
+
+## FAQ
+
+### Q: このプラットフォームで音楽を生成できますか?
+
+A: いいえ、Kaleido AI Musicは音楽生成機能を持っていません。Suno AI、Udioなどの外部AIプラットフォームで生成した音楽を展示・共有するためのプラットフォームです。
+
+### Q: 商用利用は可能ですか?
+
+A: プロジェクト自体はMITライセンスで提供されていますが、展示する音楽の著作権は各生成AIプラットフォームの利用規約に従います。商用利用する場合は、使用するAIプラットフォームのライセンスを確認してください。
+
+### Q: スマートフォンでの動作はどうですか?
+
+A: Kaleido AI Musicはモバイルファースト設計で、スマートフォンでの快適な閲覧・視聴を最優先に開発されています。iOS Safari、Android Chrome で動作確認済みです。
+
+### Q: どのような音声フォーマットに対応していますか?
+
+A: 主にMP3とWAVフォーマットに対応しています。ブラウザの Web Audio API でサポートされているフォーマットであれば再生可能です。
+
+### Q: 自分の音楽をアップロードするにはどうすればいいですか?
+
+A: 現在、アップロード機能は管理者向けに開発中です。一般ユーザー向けのアップロード機能は今後のロードマップに含まれています。
+
+### Q: オフラインで音楽を聴けますか?
+
+A: ダウンロード機能を使用すれば、音楽ファイルをローカルに保存してオフラインで聴くことができます。
+
+### Q: データベースは何を使っていますか?
+
+A: Neon PostgreSQLを使用しています。Neonはサーバーレス PostgreSQL で、無料プランから始められます。
+
+### Q: 本番環境へのデプロイは簡単ですか?
+
+A: はい、Vercelへのデプロイは非常に簡単です。GitHubリポジトリを接続して環境変数を設定するだけで、数分でデプロイできます。
+
+## ロードマップ
+
+### 🎯 短期目標 (1-2ヶ月)
+
+- [ ] 一般ユーザー向けアップロード機能
+- [ ] ユーザー認証・ログイン機能
+- [ ] プレイリスト作成機能
+- [ ] いいね・お気に入り機能
+- [ ] コメント機能
+
+### 🚀 中期目標 (3-6ヶ月)
+
+- [ ] ユーザープロフィールページ
+- [ ] ソーシャルシェア機能
+- [ ] 音楽の波形ビジュアライザー
+- [ ] 高度な検索フィルター (BPM, キー, ムードなど)
+- [ ] レコメンデーション機能
+- [ ] API公開
+
+### 💡 長期目標 (6ヶ月以上)
+
+- [ ] モバイルアプリ (React Native)
+- [ ] AI音楽生成プラットフォームとの直接連携
+- [ ] コミュニティ機能 (フォロー、フィード)
+- [ ] 音楽コンテスト・イベント機能
+- [ ] 多言語対応 (英語、中国語など)
+- [ ] サブスクリプション/収益化機能
+
+### 📝 継続的な改善
+
+- パフォーマンス最適化
+- アクセシビリティ向上
+- SEO対策
+- セキュリティ強化
+- テストカバレッジ向上
+
+## コントリビューション
+
+Kaleido AI Musicへのコントリビューションを歓迎します!
+
+### コントリビューション方法
+
+1. **バグ報告**: [GitHub Issues](https://github.com/M-Ito-7310/kaleido-ai-music/issues) でバグを報告してください
+2. **機能リクエスト**: [GitHub Discussions](https://github.com/M-Ito-7310/kaleido-ai-music/discussions) で新機能を提案してください
+3. **プルリクエスト**: 以下の手順でコードをコントリビュートしてください
+
+### プルリクエストの手順
+
+1. リポジトリをフォーク
+2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
+
+### コーディング規約
+
+- **コードスタイル**: Prettierでフォーマット (`npm run format`)
+- **Lint**: ESLintチェックを通過すること (`npm run lint`)
+- **型チェック**: TypeScript型エラーがないこと (`npm run type-check`)
+- **コミットメッセージ**: [Conventional Commits](https://www.conventionalcommits.org/) に従う
+
+### 開発の流れ
+
+```bash
+# リポジトリをフォーク後、クローン
+git clone https://github.com/your-username/kaleido-ai-music.git
+cd kaleido-ai-music
+
+# 依存関係をインストール
+npm install
+
+# 環境変数を設定
+cp .env.local.example .env.local
+# .env.local を編集
+
+# 開発サーバーを起動
+npm run dev
+
+# コードをフォーマット
+npm run format
+
+# Lintチェック
+npm run lint
+
+# 型チェック
+npm run type-check
+```
+
+### コントリビューター
+
+このプロジェクトに貢献してくださった皆様に感謝します!
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- コントリビューターリストは自動生成されます -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## ライセンス
 
@@ -177,13 +414,13 @@ kaleido-ai-music/
 ## 参考プロジェクト
 
 - [BlueprintHub](https://github.com/M-Ito-7310/BlueprintHub) - AIプログラマーと共同開発したマーケットプレイス
-- [CodeNest](https://github.com/yourusername/codenest) - 紹介コード共有プラットフォーム
-- [nocode-ui-builder](https://github.com/yourusername/nocode-ui-builder) - ノーコードUIビルダー
+- [CodeNest](https://github.com/M-Ito-7310/codenest) - 紹介コード共有プラットフォーム
+- [nocode-ui-builder](https://github.com/M-Ito-7310/nocode-ui-builder) - ノーコードUIビルダー
 
 ## お問い合わせ
 
-- **バグ報告**: [GitHub Issues](https://github.com/yourusername/kaleido-ai-music/issues)
-- **機能リクエスト**: [GitHub Discussions](https://github.com/yourusername/kaleido-ai-music/discussions)
+- **バグ報告**: [GitHub Issues](https://github.com/M-Ito-7310/kaleido-ai-music/issues)
+- **機能リクエスト**: [GitHub Discussions](https://github.com/M-Ito-7310/kaleido-ai-music/discussions)
 
 ---
 
