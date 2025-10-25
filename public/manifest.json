@@ -1,22 +1,87 @@
 {
   "name": "Kaleido AI Music",
   "short_name": "Kaleido Music",
-  "description": "AI生成音楽ライブラリプラットフォーム",
+  "description": "AI生成音楽ライブラリプラットフォーム - Suno AI、Udio等で生成した音楽を視聴・ダウンロードできます",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
   "orientation": "portrait-primary",
+  "categories": ["music", "entertainment"],
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "ホーム画面"
+    },
+    {
+      "src": "/screenshots/mobile-library.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "音楽ライブラリ"
+    },
+    {
+      "src": "/screenshots/mobile-player.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "音楽プレイヤー"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ライブラリ",
+      "short_name": "ライブラリ",
+      "description": "音楽ライブラリを開く",
+      "url": "/library",
+      "icons": [
+        {
+          "src": "/icons/shortcut-library.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "アップロード",
+      "short_name": "アップロード",
+      "description": "音楽をアップロード",
+      "url": "/upload",
+      "icons": [
+        {
+          "src": "/icons/shortcut-upload.png",
+          "sizes": "96x96"
+        }
+      ]
     }
   ]
 }

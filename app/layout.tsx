@@ -6,6 +6,8 @@ import { Footer } from '@/components/layout/Footer';
 import { PlayerProvider } from '@/lib/contexts/PlayerContext';
 import { GlobalPlayer } from '@/components/music/GlobalPlayer';
 import { ThemeProvider } from 'next-themes';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
+import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -94,10 +96,12 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
           <PlayerProvider>
+            <OfflineIndicator />
             <Header />
             <main className="min-h-screen">{children}</main>
             <Footer />
             <GlobalPlayer />
+            <InstallPrompt />
           </PlayerProvider>
         </ThemeProvider>
       </body>

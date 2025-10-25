@@ -15,6 +15,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@neondatabase/serverless": "^0.9.5",
     "@vercel/blob": "^2.0.0",
     "clsx": "^2.1.1",
