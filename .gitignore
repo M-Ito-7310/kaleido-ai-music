@@ -35,3 +35,6 @@ next-env.d.ts
 
 # Drizzle
 /drizzle
+
+# Claude Code
+.claude
