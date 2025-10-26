@@ -1,17 +1,24 @@
+import { AudioProcessor, type AudioSettings, DEFAULT_AUDIO_SETTINGS } from './audioProcessor';
+
 export class AudioPlayer {
   private audioContext: AudioContext | null = null;
   private source: AudioBufferSourceNode | null = null;
   private gainNode: GainNode | null = null;
+  private audioProcessor: AudioProcessor | null = null;
   private audioBuffer: AudioBuffer | null = null;
   private startTime: number = 0;
   private pauseTime: number = 0;
   private isPlaying: boolean = false;
+  private audioSettings: AudioSettings = DEFAULT_AUDIO_SETTINGS;
 
   constructor() {
     if (typeof window !== 'undefined') {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       this.gainNode = this.audioContext.createGain();
-      this.gainNode.connect(this.audioContext.destination);
+      this.audioProcessor = new AudioProcessor(this.audioContext);
+
+      // Connect: gain → processor → destination
+      this.gainNode.connect(this.audioProcessor.getOutputNode());
     }
   }
 
@@ -90,8 +97,28 @@ export class AudioPlayer {
     return this.isPlaying;
   }
 
+  /**
+   * Apply audio settings (EQ, effects)
+   */
+  applyAudioSettings(settings: AudioSettings): void {
+    this.audioSettings = settings;
+    if (this.audioProcessor) {
+      this.audioProcessor.applySettings(settings);
+    }
+  }
+
+  /**
+   * Get current audio settings
+   */
+  getAudioSettings(): AudioSettings {
+    return { ...this.audioSettings };
+  }
+
   destroy(): void {
     this.stop();
+    if (this.audioProcessor) {
+      this.audioProcessor.disconnect();
+    }
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = null;

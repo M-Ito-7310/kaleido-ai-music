@@ -183,7 +183,7 @@ export function GlobalPlayer() {
         />
       </AnimatePresence>
 
-      <FullScreenPlayer />
+      <FullScreenPlayer audioPlayer={audioPlayerRef.current} />
     </>
   );
 }

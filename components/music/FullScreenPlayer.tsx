@@ -1,13 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Settings2 } from 'lucide-react';
 import Image from 'next/image';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
 import { SeekBar } from './SeekBar';
 import { PlayerControls } from './PlayerControls';
 import { FavoriteButton } from '@/components/ui/FavoriteButton';
 import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
+import { AudioSettings } from '@/components/audio/AudioSettings';
 
 /**
  * Full-Screen Player Component
@@ -16,12 +18,14 @@ import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
  * - Large album art with dynamic background
  * - Seek bar with dragging
  * - Player controls (play/pause, next/prev, repeat, shuffle)
+ * - Audio settings (EQ, effects)
  * - Swipe down to close
  * - Glassmorphism effects
  */
-export function FullScreenPlayer() {
+export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
   const { currentTrack, isFullScreen, setIsFullScreen } = usePlayer();
   const { colors } = useDynamicColors(currentTrack?.imageUrl);
+  const [showAudioSettings, setShowAudioSettings] = useState(false);
 
   const handleClose = () => {
     setIsFullScreen(false);
@@ -61,7 +65,15 @@ export function FullScreenPlayer() {
               <p className="text-sm text-white/80">Now Playing</p>
             </div>
 
-            <div className="w-10" /> {/* Spacer for center alignment */}
+            <motion.button
+              onClick={() => setShowAudioSettings(true)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-black/30 transition-colors"
+              aria-label="Open audio settings"
+            >
+              <Settings2 className="h-5 w-5" />
+            </motion.button>
           </div>
 
           {/* Content */}
@@ -125,6 +137,13 @@ export function FullScreenPlayer() {
               <PlayerControls size="lg" />
             </motion.div>
           </div>
+
+          {/* Audio Settings Modal */}
+          <AudioSettings
+            isOpen={showAudioSettings}
+            onClose={() => setShowAudioSettings(false)}
+            audioPlayer={audioPlayer}
+          />
         </motion.div>
       )}
     </AnimatePresence>

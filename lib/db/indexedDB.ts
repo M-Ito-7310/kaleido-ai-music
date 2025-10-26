@@ -1,4 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import type { AudioSettings } from '@/lib/audio/audioProcessor';
 
 /**
  * IndexedDB Schema for Kaleido AI Music
@@ -7,6 +8,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
  * - favorites: User's favorite tracks
  * - history: Recently played tracks with progress
  * - playbackState: Current playback state for resume
+ * - audioSettings: EQ and effects settings
  */
 interface KaleidoDB extends DBSchema {
   favorites: {
@@ -38,10 +40,18 @@ interface KaleidoDB extends DBSchema {
       updatedAt: Date;
     };
   };
+  audioSettings: {
+    key: string;
+    value: {
+      id: string;
+      settings: AudioSettings;
+      updatedAt: Date;
+    };
+  };
 }
 
 const DB_NAME = 'kaleido-music';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise: Promise<IDBPDatabase<KaleidoDB>> | null = null;
 
@@ -75,6 +85,13 @@ export function getDB(): Promise<IDBPDatabase<KaleidoDB>> {
         // Create playbackState store
         if (!db.objectStoreNames.contains('playbackState')) {
           db.createObjectStore('playbackState', {
+            keyPath: 'id',
+          });
+        }
+
+        // Create audioSettings store
+        if (!db.objectStoreNames.contains('audioSettings')) {
+          db.createObjectStore('audioSettings', {
             keyPath: 'id',
           });
         }
@@ -249,4 +266,39 @@ export async function loadPlaybackState(): Promise<{
 export async function clearPlaybackState(): Promise<void> {
   const db = await getDB();
   await db.delete('playbackState', PLAYBACK_STATE_KEY);
+}
+
+// =====================
+// Audio Settings Operations
+// =====================
+
+const AUDIO_SETTINGS_KEY = 'default';
+
+/**
+ * Save audio settings (EQ, effects)
+ */
+export async function saveAudioSettings(settings: AudioSettings): Promise<void> {
+  const db = await getDB();
+  await db.put('audioSettings', {
+    id: AUDIO_SETTINGS_KEY,
+    settings,
+    updatedAt: new Date(),
+  });
+}
+
+/**
+ * Load saved audio settings
+ */
+export async function loadAudioSettings(): Promise<AudioSettings | null> {
+  const db = await getDB();
+  const data = await db.get('audioSettings', AUDIO_SETTINGS_KEY);
+  return data ? data.settings : null;
+}
+
+/**
+ * Clear audio settings
+ */
+export async function clearAudioSettings(): Promise<void> {
+  const db = await getDB();
+  await db.delete('audioSettings', AUDIO_SETTINGS_KEY);
 }
