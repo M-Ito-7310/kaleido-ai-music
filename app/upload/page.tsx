@@ -1,46 +1,54 @@
-import { getCategories } from '@/lib/db/queries';
-import { MusicUploadForm } from '@/components/upload/MusicUploadForm';
-import { Upload } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata = {
   title: '音楽をアップロード - Kaleido AI Music',
   description: 'AI生成音楽をアップロードして、多くの人に聴いてもらいましょう。',
 };
 
-// 動的レンダリングを強制（ビルド時のプリレンダリングを無効化）
-export const dynamic = 'force-dynamic';
-
-export default async function UploadPage() {
-  const categories = await getCategories();
-
+export default function UploadPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* ヘッダー */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-            <Upload className="h-8 w-8 text-primary-600" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
+            <Lock className="h-8 w-8 text-gray-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 font-display">音楽をアップロード</h1>
+          <h1 className="text-3xl font-bold text-gray-900 font-display">音楽アップロード機能</h1>
           <p className="mt-2 text-gray-600">
-            AI生成音楽をアップロードして、多くの人に聴いてもらいましょう
+            現在、この機能は一般公開されていません
           </p>
         </div>
 
-        {/* フォーム */}
+        {/* メッセージ */}
         <div className="rounded-lg bg-white p-8 shadow-sm">
-          <MusicUploadForm categories={categories} />
+          <div className="text-center space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900">
+              デモアプリのため非公開中
+            </h2>
+            <p className="text-gray-600">
+              Kaleido AI Musicは現在デモアプリとして公開されています。<br />
+              セキュリティとコンテンツ品質管理のため、音楽のアップロード機能は管理者のみに制限されています。
+            </p>
+            <div className="pt-4">
+              <Link
+                href="/library"
+                className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
+              >
+                ライブラリに戻る
+              </Link>
+            </div>
+          </div>
         </div>
 
-        {/* 注意事項 */}
-        <div className="mt-8 rounded-lg bg-yellow-50 p-6">
-          <h3 className="text-sm font-semibold text-yellow-900 mb-2">注意事項</h3>
-          <ul className="list-disc list-inside space-y-1 text-sm text-yellow-800">
-            <li>アップロードできるのはAI生成音楽のみです</li>
-            <li>著作権を侵害する音楽はアップロードしないでください</li>
-            <li>音楽ファイルは最大50MBまでです</li>
-            <li>画像ファイルは最大10MBまでです</li>
-          </ul>
+        {/* 今後の予定 */}
+        <div className="mt-8 rounded-lg bg-blue-50 p-6">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">今後の予定</h3>
+          <p className="text-sm text-blue-800">
+            将来的に管理者向けの音楽アップロード機能を実装予定です。<br />
+            現在は厳選されたAI生成音楽をお楽しみください。
+          </p>
         </div>
       </div>
     </div>

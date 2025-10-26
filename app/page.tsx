@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Music, Headphones, Download, Sparkles } from 'lucide-react';
+import { ArrowRight, Music, Headphones, Download } from 'lucide-react';
 import { ScaleTransition } from '@/components/ui/PageTransition';
 
 export default function HomePage() {
@@ -23,13 +23,6 @@ export default function HomePage() {
                 className="rounded-lg bg-primary-600 dark:bg-primary-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary-500 dark:hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors flex items-center gap-2"
               >
                 ライブラリを見る
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              <Link
-                href="/upload"
-                className="rounded-lg bg-primary-600 dark:bg-primary-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary-500 dark:hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors flex items-center gap-2"
-              >
-                音楽をアップロード
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
@@ -113,29 +106,6 @@ export default function HomePage() {
               すべての音楽を見る
               <ArrowRight className="h-5 w-5" />
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTAセクション */}
-      <section className="bg-primary-600 dark:bg-primary-700 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl font-display">
-              あなたのAI音楽を共有しませんか？
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-primary-100 dark:text-primary-200">
-              Suno AI、Udio等で生成した音楽をアップロードして、多くの人に聴いてもらいましょう。
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                href="/upload"
-                className="rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary-600 dark:text-primary-700 shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2"
-              >
-                <Sparkles className="h-5 w-5" />
-                今すぐアップロード
-              </Link>
-            </div>
           </div>
         </div>
       </section>

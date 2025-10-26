@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Music, Heart, Clock, Sparkles, Library, Upload, Info } from 'lucide-react';
+import { Menu, X, Music, Heart, Clock, Sparkles, Library, Info } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { VoiceControl } from '@/components/accessibility/VoiceControl';
 
@@ -51,13 +51,6 @@ export function Header() {
           >
             <Clock className="h-4 w-4" />
             履歴
-          </Link>
-          <Link
-            href="/upload"
-            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-          >
-            <Upload className="h-4 w-4" />
-            アップロード
           </Link>
           <Link
             href="/about"
@@ -123,14 +116,6 @@ export function Header() {
             >
               <Clock className="h-5 w-5" />
               履歴
-            </Link>
-            <Link
-              href="/upload"
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Upload className="h-5 w-5" />
-              アップロード
             </Link>
             <Link
               href="/about"

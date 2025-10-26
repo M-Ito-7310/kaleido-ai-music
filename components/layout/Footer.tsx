@@ -104,11 +104,6 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/upload" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
-                    アップロード
-                  </Link>
-                </li>
-                <li>
                   <Link href="/about" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
                     このサイトについて
                   </Link>
