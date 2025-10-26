@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Music, Heart, Clock } from 'lucide-react';
+import { Menu, X, Music, Heart, Clock, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export function Header() {
@@ -28,6 +28,13 @@ export function Header() {
             className="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
             ライブラリ
+          </Link>
+          <Link
+            href="/recommendations"
+            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            <Sparkles className="h-4 w-4" />
+            AI おすすめ
           </Link>
           <Link
             href="/favorites"
@@ -85,6 +92,14 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               ライブラリ
+            </Link>
+            <Link
+              href="/recommendations"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Sparkles className="h-5 w-5" />
+              AI おすすめ
             </Link>
             <Link
               href="/favorites"
