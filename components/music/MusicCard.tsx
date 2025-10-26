@@ -8,6 +8,7 @@ import type { Music } from '@/lib/db/schema';
 import { formatDuration } from '@/lib/utils';
 import { PlayButton } from './PlayButton';
 import { FavoriteButton } from '@/components/ui/FavoriteButton';
+import { ShareButton } from '@/components/social/ShareButton';
 
 interface MusicCardProps {
   music: Music;
@@ -46,8 +47,14 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
               {music.category}
             </span>
           </div>
-          {/* お気に入りボタン */}
-          <div className="absolute top-2 right-2">
+          {/* お気に入り & シェアボタン */}
+          <div className="absolute top-2 right-2 flex gap-2">
+            <div
+              onClick={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <ShareButton track={music} variant="icon" size="sm" />
+            </div>
             <FavoriteButton trackId={music.id} size="sm" />
           </div>
         </div>

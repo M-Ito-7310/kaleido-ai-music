@@ -12,6 +12,7 @@ import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
 import { AudioSettings } from '@/components/audio/AudioSettings';
 import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 import { Visualizer3D } from './Visualizer3D';
+import { ShareButton } from '@/components/social/ShareButton';
 
 /**
  * Full-Screen Player Component
@@ -95,6 +96,10 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
               >
                 <Sparkles className="h-5 w-5" />
               </motion.button>
+
+              <div onClick={(e) => e.stopPropagation()}>
+                <ShareButton track={currentTrack} variant="icon" size="md" />
+              </div>
 
               <motion.button
                 onClick={() => setShowAudioSettings(true)}
