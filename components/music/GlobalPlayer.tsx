@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
 import { MiniPlayer } from './MiniPlayer';
+import { FullScreenPlayer } from './FullScreenPlayer';
 import { AudioPlayer } from '@/lib/audio/player';
 import {
   setupMediaSession,
@@ -27,11 +28,13 @@ export function GlobalPlayer() {
     playPrevious,
     clearPlayer,
     playlist,
+    setCurrentTime,
+    setDuration,
+    setIsFullScreen,
+    repeatMode,
   } = usePlayer();
 
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // AudioPlayerの初期化とクリーンアップ
@@ -87,7 +90,8 @@ export function GlobalPlayer() {
             setCurrentTime(newTime);
           },
           onSeekForward: () => {
-            const newTime = Math.min(duration, (audioPlayerRef.current?.getCurrentTime() || 0) + 10);
+            const currentDuration = audioPlayerRef.current?.getDuration() || 0;
+            const newTime = Math.min(currentDuration, (audioPlayerRef.current?.getCurrentTime() || 0) + 10);
             audioPlayerRef.current?.seek(newTime);
             setCurrentTime(newTime);
           },
@@ -98,7 +102,7 @@ export function GlobalPlayer() {
         }
       );
     });
-  }, [currentTrack, isPlaying, togglePlayPause, playNext, playPrevious, playlist.length, duration]);
+  }, [currentTrack, isPlaying, togglePlayPause, playNext, playPrevious, playlist.length, setCurrentTime, setDuration]);
 
   // 再生状態の変更
   useEffect(() => {
@@ -115,16 +119,25 @@ export function GlobalPlayer() {
 
   // 再生位置の更新
   useEffect(() => {
-    if (isPlaying && duration > 0) {
+    if (isPlaying) {
       intervalRef.current = setInterval(() => {
         const time = audioPlayerRef.current?.getCurrentTime() || 0;
+        const currentDuration = audioPlayerRef.current?.getDuration() || 0;
         setCurrentTime(time);
-        updatePositionState(duration, time);
+        updatePositionState(currentDuration, time);
 
         // トラック終了時の処理
-        if (time >= duration) {
-          if (playlist.length > 1) {
+        if (time >= currentDuration && currentDuration > 0) {
+          if (repeatMode === 'one') {
+            // リピート1: 現在のトラックを再生
+            audioPlayerRef.current?.seek(0);
+            setCurrentTime(0);
+          } else if (playlist.length > 1) {
             playNext();
+          } else if (repeatMode === 'all') {
+            // リピートオールだがプレイリストが1曲の場合、最初に戻る
+            audioPlayerRef.current?.seek(0);
+            setCurrentTime(0);
           } else {
             togglePlayPause();
             setCurrentTime(0);
@@ -142,26 +155,35 @@ export function GlobalPlayer() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPlaying, duration, playlist.length, playNext, togglePlayPause]);
+  }, [isPlaying, playlist.length, playNext, togglePlayPause, setCurrentTime, repeatMode]);
+
+  const handleExpand = () => {
+    setIsFullScreen(true);
+  };
 
   if (!currentTrack) return null;
 
   return (
-    <AnimatePresence>
-      <MiniPlayer
-        track={{
-          id: currentTrack.id,
-          title: currentTrack.title,
-          artist: currentTrack.artist,
-          imageUrl: currentTrack.imageUrl,
-          audioUrl: currentTrack.audioUrl,
-        }}
-        isPlaying={isPlaying}
-        onPlayPause={togglePlayPause}
-        onNext={playlist.length > 1 ? playNext : undefined}
-        onPrevious={playlist.length > 1 ? playPrevious : undefined}
-        onClose={clearPlayer}
-      />
-    </AnimatePresence>
+    <>
+      <AnimatePresence>
+        <MiniPlayer
+          track={{
+            id: currentTrack.id,
+            title: currentTrack.title,
+            artist: currentTrack.artist,
+            imageUrl: currentTrack.imageUrl,
+            audioUrl: currentTrack.audioUrl,
+          }}
+          isPlaying={isPlaying}
+          onPlayPause={togglePlayPause}
+          onNext={playlist.length > 1 ? playNext : undefined}
+          onPrevious={playlist.length > 1 ? playPrevious : undefined}
+          onClose={clearPlayer}
+          onExpand={handleExpand}
+        />
+      </AnimatePresence>
+
+      <FullScreenPlayer />
+    </>
   );
 }
