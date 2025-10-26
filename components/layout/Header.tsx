@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Music, Heart, Clock, Sparkles } from 'lucide-react';
+import { Menu, X, Music, Heart, Clock, Sparkles, Library, Upload, Info } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { VoiceControl } from '@/components/accessibility/VoiceControl';
 
@@ -26,8 +26,9 @@ export function Header() {
         <div className="hidden md:flex md:gap-x-8 md:items-center">
           <Link
             href="/library"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
+            <Library className="h-4 w-4" />
             ライブラリ
           </Link>
           <Link
@@ -53,14 +54,16 @@ export function Header() {
           </Link>
           <Link
             href="/upload"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
+            <Upload className="h-4 w-4" />
             アップロード
           </Link>
           <Link
             href="/about"
-            className="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
+            <Info className="h-4 w-4" />
             このサイトについて
           </Link>
           <VoiceControl />
@@ -91,9 +94,10 @@ export function Header() {
           <div className="space-y-1 px-4 py-4">
             <Link
               href="/library"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               onClick={() => setMobileMenuOpen(false)}
             >
+              <Library className="h-5 w-5" />
               ライブラリ
             </Link>
             <Link
@@ -122,16 +126,18 @@ export function Header() {
             </Link>
             <Link
               href="/upload"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               onClick={() => setMobileMenuOpen(false)}
             >
+              <Upload className="h-5 w-5" />
               アップロード
             </Link>
             <Link
               href="/about"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               onClick={() => setMobileMenuOpen(false)}
             >
+              <Info className="h-5 w-5" />
               このサイトについて
             </Link>
 
