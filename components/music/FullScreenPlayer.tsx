@@ -14,6 +14,7 @@ import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 import { Visualizer3D } from './Visualizer3D';
 import { ShareButton } from '@/components/social/ShareButton';
 import { useGamification } from '@/lib/contexts/GamificationContext';
+import { MusicTitleIcon } from './MusicTitleIcon';
 
 /**
  * Full-Screen Player Component
@@ -142,13 +143,19 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
                 />
               ) : (
                 <>
-                  <Image
-                    src={currentTrack.imageUrl}
-                    alt={currentTrack.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+                  {currentTrack.imageUrl ? (
+                    <Image
+                      src={currentTrack.imageUrl}
+                      alt={currentTrack.title}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <MusicTitleIcon title={currentTrack.title} size="xl" className="w-48 h-48 text-6xl" />
+                    </div>
+                  )}
 
                   {/* Favorite Button Overlay */}
                   <div className="absolute top-4 right-4">

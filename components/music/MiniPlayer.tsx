@@ -4,6 +4,7 @@ import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import { Play, Pause, SkipForward, SkipBack, X } from 'lucide-react';
+import { MusicTitleIcon } from './MusicTitleIcon';
 
 interface MiniPlayerProps {
   track: {
@@ -89,13 +90,19 @@ export function MiniPlayer({
             className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
             whileHover={{ scale: 1.05 }}
           >
-            <Image
-              src={track.imageUrl}
-              alt={track.title}
-              fill
-              sizes="56px"
-              className="object-cover"
-            />
+            {track.imageUrl ? (
+              <Image
+                src={track.imageUrl}
+                alt={track.title}
+                fill
+                sizes="56px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <MusicTitleIcon title={track.title} size="sm" />
+              </div>
+            )}
           </motion.div>
 
           {/* トラック情報 */}

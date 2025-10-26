@@ -19,21 +19,17 @@ export function MusicUploadForm({ categories }: MusicUploadFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: '',
-    artist: '',
     description: '',
     category: '',
     tags: '',
-    aiPlatform: '',
-    genre: '',
     mood: '',
-    tempo: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!audioFile || !imageFile) {
-      alert('音楽ファイルと画像ファイルを選択してください');
+    if (!audioFile) {
+      alert('音楽ファイルを選択してください');
       return;
     }
 
@@ -41,35 +37,41 @@ export function MusicUploadForm({ categories }: MusicUploadFormProps) {
 
     try {
       // 1. ファイルをアップロード
-      const [audioUploadRes, imageUploadRes] = await Promise.all([
-        uploadFile(audioFile, 'audio'),
-        uploadFile(imageFile, 'image'),
-      ]);
+      const uploadPromises: Promise<Response>[] = [uploadFile(audioFile, 'audio')];
 
-      if (!audioUploadRes.ok || !imageUploadRes.ok) {
-        throw new Error('ファイルのアップロードに失敗しました');
+      if (imageFile) {
+        uploadPromises.push(uploadFile(imageFile, 'image'));
+      }
+
+      const uploadResults = await Promise.all(uploadPromises);
+      const audioUploadRes = uploadResults[0];
+      const imageUploadRes = uploadResults[1];
+
+      if (!audioUploadRes.ok) {
+        throw new Error('音楽ファイルのアップロードに失敗しました');
+      }
+
+      if (imageFile && !imageUploadRes?.ok) {
+        throw new Error('画像ファイルのアップロードに失敗しました');
       }
 
       const audioData = await audioUploadRes.json();
-      const imageData = await imageUploadRes.json();
+      const imageData = imageFile ? await imageUploadRes.json() : null;
 
       // 2. 音楽メタデータを作成
       const duration = await getAudioDuration(audioFile);
 
       const musicData = {
         title: formData.title,
-        artist: formData.artist,
+        artist: 'Unknown Artist',
         description: formData.description,
         audioUrl: audioData.url,
-        imageUrl: imageData.url,
+        imageUrl: imageData?.url || '',
         duration: Math.floor(duration),
         fileSize: audioFile.size,
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
-        aiPlatform: formData.aiPlatform || undefined,
-        genre: formData.genre || undefined,
         mood: formData.mood || undefined,
-        tempo: formData.tempo ? parseInt(formData.tempo, 10) : undefined,
       };
 
       // 3. データベースに保存
@@ -146,51 +148,35 @@ export function MusicUploadForm({ categories }: MusicUploadFormProps) {
         {/* 画像ファイル */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            カバー画像 <span className="text-red-500">*</span>
+            カバー画像（任意）
           </label>
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 hover:bg-gray-100 transition-colors">
             <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
             <span className="text-sm text-gray-600">
-              {imageFile ? imageFile.name : '画像ファイルを選択'}
+              {imageFile ? imageFile.name : '画像ファイルを選択（省略可）'}
             </span>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               className="hidden"
-              required
             />
           </label>
         </div>
       </div>
 
       {/* 基本情報 */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            タイトル <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            アーティスト <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.artist}
-            onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            required
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          タイトル <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          required
+        />
       </div>
 
       {/* 説明 */}
@@ -240,39 +226,15 @@ export function MusicUploadForm({ categories }: MusicUploadFormProps) {
       </div>
 
       {/* オプション情報 */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">生成AI</label>
-          <input
-            type="text"
-            value={formData.aiPlatform}
-            onChange={(e) => setFormData({ ...formData, aiPlatform: e.target.value })}
-            placeholder="例: Suno AI"
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">ジャンル</label>
-          <input
-            type="text"
-            value={formData.genre}
-            onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
-            placeholder="例: インディーポップ"
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">BPM</label>
-          <input
-            type="number"
-            value={formData.tempo}
-            onChange={(e) => setFormData({ ...formData, tempo: e.target.value })}
-            placeholder="例: 120"
-            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">ムード</label>
+        <input
+          type="text"
+          value={formData.mood}
+          onChange={(e) => setFormData({ ...formData, mood: e.target.value })}
+          placeholder="例: リラックス, エネルギッシュ"
+          className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        />
       </div>
 
       {/* 送信ボタン */}

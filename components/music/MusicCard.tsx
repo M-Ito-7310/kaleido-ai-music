@@ -9,6 +9,7 @@ import { formatDuration } from '@/lib/utils';
 import { PlayButton } from './PlayButton';
 import { FavoriteButton } from '@/components/ui/FavoriteButton';
 import { ShareButton } from '@/components/social/ShareButton';
+import { MusicTitleIcon } from './MusicTitleIcon';
 
 interface MusicCardProps {
   music: Music;
@@ -29,12 +30,18 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
       >
         {/* サムネイル */}
         <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
-          <Image
-            src={music.imageUrl}
-            alt={music.title}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-          />
+          {music.imageUrl ? (
+            <Image
+              src={music.imageUrl}
+              alt={music.title}
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <MusicTitleIcon title={music.title} size="xl" />
+            </div>
+          )}
           {/* 再生オーバーレイ */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30">
             <div className="scale-0 transition-transform group-hover:scale-100">

@@ -58,10 +58,10 @@ export async function GET(request: NextRequest) {
 // POST /api/music - 新しい音楽を作成
 const createMusicSchema = z.object({
   title: z.string().min(1).max(255),
-  artist: z.string().min(1).max(255),
+  artist: z.string().min(1).max(255).default('Unknown Artist'),
   description: z.string().optional(),
   audioUrl: z.string().url(),
-  imageUrl: z.string().url(),
+  imageUrl: z.string().default(''),
   duration: z.number().positive(),
   fileSize: z.number().positive().optional(),
   category: z.string().min(1).max(100),
