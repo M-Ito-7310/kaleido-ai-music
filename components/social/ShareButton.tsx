@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Share2, Check, Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Music } from '@/lib/db/schema';
+import { useGamification } from '@/lib/contexts/GamificationContext';
 
 /**
  * Share Button Component
  *
  * Uses Web Share API for native sharing on supported devices,
  * falls back to clipboard copy on desktop
+ * Tracks gamification actions
  */
 
 interface ShareButtonProps {
@@ -26,6 +28,7 @@ export function ShareButton({
   className = '',
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
+  const { trackAction } = useGamification();
 
   const handleShare = async () => {
     const shareData = {
@@ -38,10 +41,14 @@ export function ShareButton({
       // Check if Web Share API is supported
       if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
         await navigator.share(shareData);
+        // Track share action
+        trackAction('track_shared');
       } else {
         // Fallback: Copy link to clipboard
         await navigator.clipboard.writeText(shareData.url);
         setCopied(true);
+        // Track share action
+        trackAction('track_shared');
 
         // Reset copied state after 2 seconds
         setTimeout(() => {

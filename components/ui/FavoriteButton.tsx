@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { useFavorites } from '@/lib/hooks/useFavorites';
+import { useGamification } from '@/lib/contexts/GamificationContext';
 
 interface FavoriteButtonProps {
   trackId: number;
@@ -18,9 +19,11 @@ interface FavoriteButtonProps {
  * - Smooth scale animation on toggle
  * - Accessible with keyboard support
  * - Haptic feedback on mobile (vibration)
+ * - Tracks gamification actions
  */
 export function FavoriteButton({ trackId, size = 'md', className = '' }: FavoriteButtonProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { trackAction } = useGamification();
   const favorited = isFavorite(trackId);
 
   const sizeClasses = {
@@ -38,7 +41,15 @@ export function FavoriteButton({ trackId, size = 'md', className = '' }: Favorit
       navigator.vibrate(10);
     }
 
+    const wasFavorited = favorited;
     await toggleFavorite(trackId);
+
+    // Track gamification action
+    if (!wasFavorited) {
+      trackAction('favorite_added');
+    } else {
+      trackAction('favorite_removed');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

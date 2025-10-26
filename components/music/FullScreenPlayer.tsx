@@ -13,6 +13,7 @@ import { AudioSettings } from '@/components/audio/AudioSettings';
 import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 import { Visualizer3D } from './Visualizer3D';
 import { ShareButton } from '@/components/social/ShareButton';
+import { useGamification } from '@/lib/contexts/GamificationContext';
 
 /**
  * Full-Screen Player Component
@@ -28,6 +29,7 @@ import { ShareButton } from '@/components/social/ShareButton';
 export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
   const { currentTrack, isFullScreen, setIsFullScreen } = usePlayer();
   const { colors } = useDynamicColors(currentTrack?.imageUrl);
+  const { trackAction } = useGamification();
   const [showAudioSettings, setShowAudioSettings] = useState(false);
   const [show3DVisualizer, setShow3DVisualizer] = useState(false);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
@@ -38,6 +40,15 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
       setAudioElement(audioPlayer.getAudioElement());
     }
   }, [audioPlayer]);
+
+  // Track visualizer usage
+  const handleVisualizerToggle = () => {
+    const newState = !show3DVisualizer;
+    setShow3DVisualizer(newState);
+    if (newState) {
+      trackAction('visualizer_used');
+    }
+  };
 
   const handleClose = () => {
     setIsFullScreen(false);
@@ -84,7 +95,7 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
 
             <div className="flex gap-2">
               <motion.button
-                onClick={() => setShow3DVisualizer(!show3DVisualizer)}
+                onClick={handleVisualizerToggle}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className={`flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md text-white transition-colors ${
