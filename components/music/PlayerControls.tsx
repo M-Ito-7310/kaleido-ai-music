@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, Repeat, Repeat1, Shuffle } from 'lucide-react';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
 import type { RepeatMode } from '@/lib/contexts/PlayerContext';
+import { useHapticFeedback } from '@/lib/hooks/useHapticFeedback';
 
 interface PlayerControlsProps {
   size?: 'sm' | 'md' | 'lg';
@@ -30,6 +31,8 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
     toggleShuffle,
   } = usePlayer();
 
+  const { triggerHaptic } = useHapticFeedback();
+
   const sizeClasses = {
     sm: {
       main: 'h-10 w-10',
@@ -54,10 +57,31 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
   const sizes = sizeClasses[size];
 
   const cycleRepeatMode = () => {
+    triggerHaptic('light');
     const modes: RepeatMode[] = ['off', 'all', 'one'];
     const currentIndex = modes.indexOf(repeatMode);
     const nextIndex = (currentIndex + 1) % modes.length;
     setRepeatMode(modes[nextIndex]);
+  };
+
+  const handlePlayPause = () => {
+    triggerHaptic('medium');
+    togglePlayPause();
+  };
+
+  const handlePrevious = () => {
+    triggerHaptic('light');
+    playPrevious();
+  };
+
+  const handleNext = () => {
+    triggerHaptic('light');
+    playNext();
+  };
+
+  const handleShuffle = () => {
+    triggerHaptic('light');
+    toggleShuffle();
   };
 
   const getRepeatIcon = () => {
@@ -71,7 +95,7 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
     <div className="flex items-center justify-center gap-4">
       {/* Shuffle Button */}
       <motion.button
-        onClick={toggleShuffle}
+        onClick={handleShuffle}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className={`rounded-full p-2 transition-colors ${
@@ -86,7 +110,7 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 
       {/* Previous Button */}
       <motion.button
-        onClick={playPrevious}
+        onClick={handlePrevious}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className={`${sizes.secondary} rounded-full p-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}
@@ -97,7 +121,7 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 
       {/* Play/Pause Button */}
       <motion.button
-        onClick={togglePlayPause}
+        onClick={handlePlayPause}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`${sizes.main} rounded-full bg-primary-600 dark:bg-primary-500 p-3 text-white shadow-lg hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors flex items-center justify-center`}
@@ -112,7 +136,7 @@ export function PlayerControls({ size = 'md' }: PlayerControlsProps) {
 
       {/* Next Button */}
       <motion.button
-        onClick={playNext}
+        onClick={handleNext}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className={`${sizes.secondary} rounded-full p-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}

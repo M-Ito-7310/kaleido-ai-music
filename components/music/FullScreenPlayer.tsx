@@ -10,6 +10,7 @@ import { PlayerControls } from './PlayerControls';
 import { FavoriteButton } from '@/components/ui/FavoriteButton';
 import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
 import { AudioSettings } from '@/components/audio/AudioSettings';
+import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 
 /**
  * Full-Screen Player Component
@@ -31,6 +32,10 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
     setIsFullScreen(false);
   };
 
+  const swipeHandlers = useSwipeGesture({
+    onSwipeDown: handleClose,
+  });
+
   if (!currentTrack) return null;
 
   const primaryColor = colors?.vibrant || '#1e293b';
@@ -48,6 +53,7 @@ export function FullScreenPlayer({ audioPlayer }: { audioPlayer?: any }) {
           style={{
             background: `linear-gradient(to bottom, ${primaryColor}20, ${secondaryColor}40, #0f172a)`,
           }}
+          {...swipeHandlers}
         >
           {/* Header */}
           <div className="relative z-10 flex items-center justify-between p-4 sm:p-6">
