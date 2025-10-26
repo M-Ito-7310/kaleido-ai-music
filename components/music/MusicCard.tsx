@@ -7,6 +7,7 @@ import { Clock, TrendingUp } from 'lucide-react';
 import type { Music } from '@/lib/db/schema';
 import { formatDuration } from '@/lib/utils';
 import { PlayButton } from './PlayButton';
+import { FavoriteButton } from '@/components/ui/FavoriteButton';
 
 interface MusicCardProps {
   music: Music;
@@ -44,6 +45,10 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
             <span className="inline-flex items-center rounded-full bg-white/90 dark:bg-gray-800/90 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:text-gray-200 backdrop-blur-sm">
               {music.category}
             </span>
+          </div>
+          {/* お気に入りボタン */}
+          <div className="absolute top-2 right-2">
+            <FavoriteButton trackId={music.id} size="sm" />
           </div>
         </div>
 

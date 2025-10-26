@@ -5,6 +5,19 @@ import type { MusicFilter, MusicStats } from '@/types/music';
 import type { NewMusic } from './schema';
 
 /**
+ * 全ての公開済み音楽を取得（フィルターなし）
+ */
+export async function getAllMusic() {
+  const result = await db
+    .select()
+    .from(music)
+    .where(eq(music.isPublished, 1))
+    .orderBy(desc(music.createdAt));
+
+  return result;
+}
+
+/**
  * 音楽一覧を取得（フィルター・ソート・ページネーション対応）
  */
 export async function getMusicList(filter: MusicFilter = {}) {

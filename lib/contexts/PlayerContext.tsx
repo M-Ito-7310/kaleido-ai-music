@@ -1,19 +1,24 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import type { Music } from '@/lib/db/schema';
+import { addToHistory } from '@/lib/db/indexedDB';
 
 interface PlayerContextType {
   currentTrack: Music | null;
   isPlaying: boolean;
   playlist: Music[];
   currentIndex: number;
+  currentTime: number;
+  duration: number;
   playTrack: (track: Music, playlist?: Music[]) => void;
   togglePlayPause: () => void;
   playNext: () => void;
   playPrevious: () => void;
   clearPlayer: () => void;
   setPlaylist: (tracks: Music[]) => void;
+  setCurrentTime: (time: number) => void;
+  setDuration: (duration: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -23,10 +28,22 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playlist, setPlaylistState] = useState<Music[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  // Track play in history when a new track starts
+  useEffect(() => {
+    if (currentTrack) {
+      addToHistory(currentTrack.id).catch((error) => {
+        console.error('Failed to add to history:', error);
+      });
+    }
+  }, [currentTrack?.id]);
 
   const playTrack = useCallback((track: Music, newPlaylist?: Music[]) => {
     setCurrentTrack(track);
     setIsPlaying(true);
+    setCurrentTime(0);
 
     if (newPlaylist) {
       setPlaylistState(newPlaylist);
@@ -75,12 +92,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         isPlaying,
         playlist,
         currentIndex,
+        currentTime,
+        duration,
         playTrack,
         togglePlayPause,
         playNext,
         playPrevious,
         clearPlayer,
         setPlaylist,
+        setCurrentTime,
+        setDuration,
       }}
     >
       {children}
