@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X, Music, Heart, Clock, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { VoiceControl } from '@/components/accessibility/VoiceControl';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,11 +63,13 @@ export function Header() {
           >
             このサイトについて
           </Link>
+          <VoiceControl />
           <ThemeToggle />
         </div>
 
         {/* モバイル: テーマトグル + メニューボタン */}
         <div className="flex items-center gap-2 md:hidden">
+          <VoiceControl />
           <ThemeToggle />
           <button
             type="button"

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
+import '../styles/accessibility.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PlayerProvider } from '@/lib/contexts/PlayerContext';
@@ -8,6 +9,9 @@ import { GlobalPlayer } from '@/components/music/GlobalPlayer';
 import { ThemeProvider } from 'next-themes';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
+import { ScreenReaderAnnouncer } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { AccessibilityPanel } from '@/components/accessibility/AccessibilityPanel';
+import { AccessibilityFeatures } from '@/components/accessibility/AccessibilityFeatures';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -96,6 +100,12 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
           <PlayerProvider>
+            {/* Accessibility Features */}
+            <AccessibilityFeatures />
+            <ScreenReaderAnnouncer />
+            <AccessibilityPanel />
+
+            {/* Main App */}
             <OfflineIndicator />
             <Header />
             <main className="min-h-screen">{children}</main>
