@@ -133,11 +133,11 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 hover:bg-gray-100 transition-colors">
             <Music className="h-12 w-12 text-gray-400 mb-2" />
             <span className="text-sm text-gray-600">
-              {audioFile ? audioFile.name : 'MP3ファイルを選択'}
+              {audioFile ? audioFile.name : '音楽ファイルを選択（MP3, WAV）'}
             </span>
             <input
               type="file"
-              accept="audio/mpeg,audio/mp3"
+              accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,.wav"
               onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
               className="hidden"
               required
