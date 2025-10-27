@@ -60,6 +60,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
     getTags(10),
   ]);
 
+  // デバッグログ
+  console.log('[DEBUG] Library Page - Tags Count:', tagsList.length);
+  console.log('[DEBUG] Library Page - Tags:', tagsList);
+
   return (
     <FadeTransition className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

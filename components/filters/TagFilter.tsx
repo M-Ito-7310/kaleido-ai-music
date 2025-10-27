@@ -14,6 +14,11 @@ export function TagFilter({ tags, selectedTags }: TagFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // デバッグログ
+  console.log('[DEBUG] TagFilter - Tags received:', tags);
+  console.log('[DEBUG] TagFilter - Tags count:', tags.length);
+  console.log('[DEBUG] TagFilter - Selected tags:', selectedTags);
+
   const handleTagToggle = (tagSlug: string) => {
     const params = new URLSearchParams(searchParams.toString());
     const currentTags = params.get('tags')?.split(',').filter(Boolean) || [];
