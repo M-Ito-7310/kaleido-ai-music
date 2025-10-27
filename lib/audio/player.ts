@@ -58,10 +58,13 @@ export class AudioPlayer {
   }
 
   private handleTimeUpdate = () => {
+    console.log('[AudioPlayer] handleTimeUpdate called, callback exists:', !!this.onTimeUpdateCallback);
     if (this.onTimeUpdateCallback && this.audioElement) {
       const currentTime = this.audioElement.currentTime;
       console.log('[AudioPlayer] Time update:', currentTime, '/', this.audioElement.duration);
       this.onTimeUpdateCallback(currentTime);
+    } else {
+      console.warn('[AudioPlayer] Time update fired but callback is null or audioElement is null');
     }
   };
 
@@ -77,10 +80,12 @@ export class AudioPlayer {
   };
 
   onTimeUpdate(callback: (time: number) => void) {
+    console.log('[AudioPlayer] onTimeUpdate callback registered');
     this.onTimeUpdateCallback = callback;
   }
 
   onEnded(callback: () => void) {
+    console.log('[AudioPlayer] onEnded callback registered');
     this.onEndedCallback = callback;
   }
 
