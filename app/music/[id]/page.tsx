@@ -168,8 +168,8 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
               {music.shareLink && (
                 <div className="flex justify-center">
                   <QRCodeDisplay
-                    value={music.shareLink}
-                    size={180}
+                    value={music.shareLink.trim()}
+                    size={200}
                     label="生成元のサービス"
                   />
                 </div>

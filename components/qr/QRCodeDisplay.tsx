@@ -27,7 +27,7 @@ export function QRCodeDisplay({
         <QRCode
           value={value}
           size={size}
-          level="M"
+          level="H"
           className="w-full h-auto"
           style={{ maxWidth: `${size}px` }}
         />
