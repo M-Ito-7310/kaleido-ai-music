@@ -24,9 +24,8 @@ export default async function AdminDashboardPage() {
       title: '音楽管理',
       description: 'アップロード済みの音楽を管理する',
       icon: Music,
-      href: '/library',
+      href: '/admin/music',
       color: 'bg-purple-100 text-purple-600',
-      comingSoon: true,
     },
     {
       title: '統計情報',
