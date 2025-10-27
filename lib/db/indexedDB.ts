@@ -148,15 +148,33 @@ export async function isFavorite(trackId: number): Promise<boolean> {
 
 /**
  * Add a track to play history
+ * If the track already exists in history, update its playedAt timestamp
+ * Otherwise, create a new entry
  */
 export async function addToHistory(trackId: number): Promise<void> {
   const db = await getDB();
-  await db.add('history', {
-    trackId,
-    playedAt: new Date(),
-    progress: 0,
-    completed: false,
-  });
+
+  // Check if this track already exists in history
+  const existingEntries = await db.getAllFromIndex('history', 'by-trackId', trackId);
+
+  if (existingEntries.length > 0) {
+    // Update the most recent entry's playedAt timestamp
+    const latest = existingEntries[existingEntries.length - 1];
+    if (latest.id) {
+      await db.put('history', {
+        ...latest,
+        playedAt: new Date(),
+      });
+    }
+  } else {
+    // Create new entry
+    await db.add('history', {
+      trackId,
+      playedAt: new Date(),
+      progress: 0,
+      completed: false,
+    });
+  }
 
   // Limit to 100 entries
   const allHistory = await db.getAllFromIndex('history', 'by-playedAt');
