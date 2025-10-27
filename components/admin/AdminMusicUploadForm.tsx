@@ -73,9 +73,9 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
         fileSize: audioFile.size,
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
-        mood: formData.mood || undefined,
-        aiPlatform: formData.aiPlatform || undefined,
-        shareLink: formData.shareLink || undefined,
+        mood: formData.mood || null,
+        aiPlatform: formData.aiPlatform || null,
+        shareLink: formData.shareLink || null,
       };
 
       // 3. データベースに保存（管理者専用API使用）

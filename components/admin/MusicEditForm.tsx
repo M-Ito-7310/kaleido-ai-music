@@ -78,9 +78,9 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
         imageUrl,
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
-        mood: formData.mood || undefined,
-        aiPlatform: formData.aiPlatform || undefined,
-        shareLink: formData.shareLink || undefined,
+        mood: formData.mood || null,
+        aiPlatform: formData.aiPlatform || null,
+        shareLink: formData.shareLink || null,
       };
 
       const updateRes = await fetch(`/api/admin/music/${music.id}`, {

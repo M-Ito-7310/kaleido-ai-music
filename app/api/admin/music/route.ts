@@ -86,10 +86,10 @@ const createMusicSchema = z.object({
   fileSize: z.number().positive().optional(),
   category: z.string().min(1).max(100),
   tags: z.array(z.string()).default([]),
-  aiPlatform: z.string().max(100).optional(),
-  shareLink: z.string().url().optional().or(z.literal('')),
-  genre: z.string().max(100).optional(),
-  mood: z.string().max(100).optional(),
+  aiPlatform: z.string().max(100).nullable().optional(),
+  shareLink: z.string().url().nullable().optional().or(z.literal('')),
+  genre: z.string().max(100).nullable().optional(),
+  mood: z.string().max(100).nullable().optional(),
   tempo: z.number().optional(),
 });
 
