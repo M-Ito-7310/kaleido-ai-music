@@ -13,17 +13,17 @@ export function TagFilter({ tags, selectedTags }: TagFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleTagToggle = (tagSlug: string) => {
+  const handleTagToggle = (tagName: string) => {
     const params = new URLSearchParams(searchParams.toString());
     const currentTags = params.get('tags')?.split(',').filter(Boolean) || [];
 
     let newTags: string[];
-    if (currentTags.includes(tagSlug)) {
+    if (currentTags.includes(tagName)) {
       // タグを削除
-      newTags = currentTags.filter((t) => t !== tagSlug);
+      newTags = currentTags.filter((t) => t !== tagName);
     } else {
       // タグを追加
-      newTags = [...currentTags, tagSlug];
+      newTags = [...currentTags, tagName];
     }
 
     if (newTags.length > 0) {
@@ -45,12 +45,12 @@ export function TagFilter({ tags, selectedTags }: TagFilterProps) {
       {/* すべてのタグ */}
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => {
-          const isSelected = selectedTags.includes(tag.slug);
+          const isSelected = selectedTags.includes(tag.name);
 
           return (
             <button
               key={tag.id}
-              onClick={() => handleTagToggle(tag.slug)}
+              onClick={() => handleTagToggle(tag.name)}
               className={cn(
                 'rounded-full px-3 py-1 text-sm font-medium transition-colors',
                 isSelected
