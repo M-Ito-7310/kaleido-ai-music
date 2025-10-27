@@ -3,9 +3,14 @@ import { validateSession } from '@/lib/auth/session';
 import { uploadMusic, uploadImage } from '@/lib/storage/upload';
 
 export async function POST(request: NextRequest) {
+  console.log('[Upload API] Request received');
+
   // 認証チェック
   const isAuthenticated = await validateSession();
+  console.log('[Upload API] Authentication check:', isAuthenticated);
+
   if (!isAuthenticated) {
+    console.error('[Upload API] Authentication failed - session invalid');
     return NextResponse.json(
       { success: false, error: '認証が必要です' },
       { status: 401 }

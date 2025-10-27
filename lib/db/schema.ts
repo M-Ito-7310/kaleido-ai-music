@@ -62,6 +62,20 @@ export const tags = pgTable('tags', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// Sessionsテーブル（管理者セッション管理）
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: varchar('id', { length: 255 }).primaryKey(),
+    userId: varchar('user_id', { length: 255 }).notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    expiresAtIdx: index('expires_at_idx').on(table.expiresAt),
+  })
+);
+
 // 型推論のためのエクスポート
 export type Music = typeof music.$inferSelect;
 export type NewMusic = typeof music.$inferInsert;
@@ -69,3 +83,5 @@ export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
 export type Tag = typeof tags.$inferSelect;
 export type NewTag = typeof tags.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
