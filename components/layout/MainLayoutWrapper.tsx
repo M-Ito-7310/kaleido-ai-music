@@ -7,8 +7,6 @@ import { GlobalPlayer } from '@/components/music/GlobalPlayer';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 import { ScreenReaderAnnouncer } from '@/components/accessibility/ScreenReaderAnnouncer';
-import { AccessibilityPanel } from '@/components/accessibility/AccessibilityPanel';
-import { AccessibilityFeatures } from '@/components/accessibility/AccessibilityFeatures';
 import { GamificationOverlay } from '@/components/gamification/GamificationOverlay';
 
 export function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -24,9 +22,7 @@ export function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Accessibility Features */}
-      <AccessibilityFeatures />
       <ScreenReaderAnnouncer />
-      <AccessibilityPanel />
 
       {/* Main App */}
       <OfflineIndicator />

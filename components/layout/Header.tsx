@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Music, Heart, Clock, Sparkles, Library, Info } from 'lucide-react';
+import { Menu, X, Music, Heart, Clock, Library, Info } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { VoiceControl } from '@/components/accessibility/VoiceControl';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,13 +31,6 @@ export function Header() {
             ライブラリ
           </Link>
           <Link
-            href="/recommendations"
-            className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-          >
-            <Sparkles className="h-4 w-4" />
-            AI おすすめ
-          </Link>
-          <Link
             href="/favorites"
             className="flex items-center gap-1 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
@@ -59,13 +51,11 @@ export function Header() {
             <Info className="h-4 w-4" />
             このサイトについて
           </Link>
-          <VoiceControl />
           <ThemeToggle />
         </div>
 
         {/* モバイル: テーマトグル + メニューボタン */}
         <div className="flex items-center gap-2 md:hidden">
-          <VoiceControl />
           <ThemeToggle />
           <button
             type="button"
@@ -92,14 +82,6 @@ export function Header() {
             >
               <Library className="h-5 w-5" />
               ライブラリ
-            </Link>
-            <Link
-              href="/recommendations"
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Sparkles className="h-5 w-5" />
-              AI おすすめ
             </Link>
             <Link
               href="/favorites"
