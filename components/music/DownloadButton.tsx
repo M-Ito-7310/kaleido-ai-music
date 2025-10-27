@@ -28,7 +28,7 @@ export function DownloadButton({ musicId, audioUrl, title, artist }: DownloadBut
       const blob = await response.blob();
 
       // ファイル名を生成（日本語対応）
-      const filename = `${artist} - ${title}.mp3`
+      const filename = `${title}.mp3`
         .replace(/[<>:"/\\|?*]/g, '') // ファイルシステムで禁止されている文字を除去
         .replace(/\s+/g, ' ')          // 複数の空白を1つに
         .trim();                       // 前後の空白を削除
