@@ -125,6 +125,12 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                     <ExternalLink className="h-4 w-4" />
                     <span>生成元のサービスで表示</span>
                   </a>
+                  {/* Suno AI楽曲の場合のみエンゲージメント促進メッセージを表示 */}
+                  {music.aiPlatform === "Suno AI" && (
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      Suno AI プラットフォームで個の楽曲の高評価とコメントをお願いします！
+                    </p>
+                  )}
                 </div>
               )}
 

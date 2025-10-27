@@ -27,6 +27,7 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
     category: music.category,
     tags: Array.isArray(music.tags) ? music.tags.join(', ') : '',
     mood: music.mood || '',
+    aiPlatform: music.aiPlatform || '',
     shareLink: music.shareLink || '',
   });
 
@@ -78,6 +79,7 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
         mood: formData.mood || undefined,
+        aiPlatform: formData.aiPlatform || undefined,
         shareLink: formData.shareLink || undefined,
       };
 
@@ -239,16 +241,33 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              共有リンク（任意）
+              AI Platform（任意）
             </label>
-            <input
-              type="url"
-              value={formData.shareLink}
-              onChange={(e) => setFormData({ ...formData, shareLink: e.target.value })}
-              placeholder="例: https://suno.com/song/..."
+            <select
+              value={formData.aiPlatform}
+              onChange={(e) => setFormData({ ...formData, aiPlatform: e.target.value })}
               className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
+            >
+              <option value="">選択してください</option>
+              <option value="Suno AI">Suno AI</option>
+              <option value="Udio">Udio</option>
+              <option value="その他">その他</option>
+            </select>
           </div>
+        </div>
+
+        {/* 共有リンク */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            共有リンク（任意）
+          </label>
+          <input
+            type="url"
+            value={formData.shareLink}
+            onChange={(e) => setFormData({ ...formData, shareLink: e.target.value })}
+            placeholder="例: https://suno.com/song/..."
+            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
         </div>
 
         {/* ボタン */}
