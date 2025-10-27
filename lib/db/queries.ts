@@ -196,9 +196,12 @@ export async function getCategories() {
  * musicテーブルのJSONフィールドから動的に集計
  */
 export async function getTags(limit?: number) {
-  // 全ての公開済み音楽を取得
+  // 全ての公開済み音楽を取得（idも含めて取得して確実性を高める）
   const allMusic = await db
-    .select({ tags: music.tags })
+    .select({
+      id: music.id,
+      tags: music.tags
+    })
     .from(music)
     .where(eq(music.isPublished, 1));
 
@@ -210,16 +213,19 @@ export async function getTags(limit?: number) {
   const tagCounts = new Map<string, number>();
 
   allMusic.forEach((musicItem) => {
+    console.log(`Processing music id=${musicItem.id}, tags:`, musicItem.tags);
     const musicTags = musicItem.tags as string[] | null;
-    console.log('Processing tags:', musicTags);
+
     if (Array.isArray(musicTags)) {
       musicTags.forEach((tag) => {
-        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+        const currentCount = tagCounts.get(tag) || 0;
+        tagCounts.set(tag, currentCount + 1);
+        console.log(`Tag "${tag}" count updated: ${currentCount} -> ${currentCount + 1}`);
       });
     }
   });
 
-  console.log('getTags - tagCounts:', Array.from(tagCounts.entries()));
+  console.log('getTags - final tagCounts:', Array.from(tagCounts.entries()));
 
   // Map を配列に変換し、カウント順にソート
   const sortedTags = Array.from(tagCounts.entries())
@@ -231,6 +237,8 @@ export async function getTags(limit?: number) {
       createdAt: new Date(),
     }))
     .sort((a, b) => b.count - a.count);
+
+  console.log('getTags - returning sortedTags:', sortedTags);
 
   // limit が指定されている場合は上位N件のみ返す
   return limit ? sortedTags.slice(0, limit) : sortedTags;
