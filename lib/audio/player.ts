@@ -17,21 +17,32 @@ export class AudioPlayer {
 
   constructor() {
     if (typeof window !== 'undefined') {
+      console.log('[AudioPlayer] Constructor called');
+
       // Create HTML Audio Element
       this.audioElement = new Audio();
       this.audioElement.crossOrigin = 'anonymous'; // Enable CORS for Web Audio API
       this.audioElement.preload = 'auto';
 
       // Add event listeners
+      console.log('[AudioPlayer] Adding event listeners');
       this.audioElement.addEventListener('timeupdate', this.handleTimeUpdate);
       this.audioElement.addEventListener('ended', this.handleEnded);
       this.audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata);
+      this.audioElement.addEventListener('playing', () => {
+        console.log('[AudioPlayer] playing event fired');
+      });
+      this.audioElement.addEventListener('pause', () => {
+        console.log('[AudioPlayer] pause event fired');
+      });
 
       // Create Web Audio API context
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log('[AudioPlayer] AudioContext created, state:', this.audioContext.state);
 
       // Create source node from audio element
       this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
+      console.log('[AudioPlayer] MediaElementSourceNode created');
 
       // Create gain node for volume control
       this.gainNode = this.audioContext.createGain();
@@ -42,6 +53,7 @@ export class AudioPlayer {
       // Connect: sourceNode → gainNode → processor → destination
       this.sourceNode.connect(this.gainNode);
       this.gainNode.connect(this.audioProcessor.getOutputNode());
+      console.log('[AudioPlayer] Audio nodes connected');
     }
   }
 
@@ -123,17 +135,23 @@ export class AudioPlayer {
     if (!this.audioElement || !this.audioContext) return;
 
     console.log('[AudioPlayer] Play called, audio context state:', this.audioContext.state);
+    console.log('[AudioPlayer] Audio element paused:', this.audioElement.paused, 'ended:', this.audioElement.ended);
+    console.log('[AudioPlayer] Audio element src:', this.audioElement.src);
 
     // Resume audio context if suspended
     if (this.audioContext.state === 'suspended') {
       console.log('[AudioPlayer] Resuming audio context');
-      this.audioContext.resume();
+      this.audioContext.resume().then(() => {
+        console.log('[AudioPlayer] Audio context resumed, state:', this.audioContext?.state);
+      });
     }
 
     // Play the audio
     this.audioElement.play()
       .then(() => {
         console.log('[AudioPlayer] Play started successfully');
+        console.log('[AudioPlayer] After play - paused:', this.audioElement?.paused, 'ended:', this.audioElement?.ended);
+        console.log('[AudioPlayer] Current time:', this.audioElement?.currentTime, 'Duration:', this.audioElement?.duration);
       })
       .catch((error) => {
         console.error('[AudioPlayer] Failed to play audio:', error);
