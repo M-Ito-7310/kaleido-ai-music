@@ -67,7 +67,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         {/* ヘッダー */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-display">音楽ライブラリ</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">AI生成音楽を視聴・ダウンロードできます</p>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            AI生成音楽を視聴・ダウンロードできます
+            {totalCount > 0 && (
+              <span className="ml-2 text-sm">
+                （{category || tags || search ? 'フィルター適用中: ' : '全'}
+                {totalCount}件）
+              </span>
+            )}
+          </p>
         </div>
 
         {/* 検索バーとソート */}
