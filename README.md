@@ -199,10 +199,60 @@ kaleido-ai-music/
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/M-Ito-7310/kaleido-ai-music)
 
-1. Vercelアカウントを作成
-2. リポジトリをインポート
-3. 環境変数を設定(`DATABASE_URL`, `BLOB_READ_WRITE_TOKEN`)
-4. デプロイ
+#### 1. Vercelアカウントを作成
+
+[https://vercel.com](https://vercel.com) でアカウントを作成します。
+
+#### 2. リポジトリをインポート
+
+Vercelダッシュボードで「New Project」をクリックし、GitHubリポジトリをインポートします。
+
+#### 3. 環境変数を設定
+
+Vercelダッシュボード → プロジェクト → **Settings** → **Environment Variables** で以下の環境変数を設定します。
+
+**必須の環境変数:**
+
+| 変数名 | 説明 | 取得方法 |
+|--------|------|----------|
+| `DATABASE_URL` | Neon PostgreSQL接続文字列 | [Neon Console](https://neon.tech) → プロジェクト → Connection Details → Connection String |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob Storageトークン | Vercelダッシュボード → プロジェクト → **Storage** → **Blob** → Create Store → トークンをコピー |
+| `ADMIN_PASSWORD` | 管理者パスワード | 任意の強力なパスワードを設定 |
+
+**環境変数の設定手順:**
+
+```bash
+# 1. DATABASE_URLの設定
+# - Name: DATABASE_URL
+# - Value: postgresql://user:password@endpoint.neon.tech/dbname?sslmode=require
+# - Environment: Production, Preview, Development (全て選択)
+
+# 2. BLOB_READ_WRITE_TOKENの設定
+# - Name: BLOB_READ_WRITE_TOKEN
+# - Value: vercel_blob_rw_... (Blob Storageから取得)
+# - Environment: Production, Preview, Development (全て選択)
+
+# 3. ADMIN_PASSWORDの設定
+# - Name: ADMIN_PASSWORD
+# - Value: your-secure-password
+# - Environment: Production, Preview, Development (全て選択)
+```
+
+**重要:** 環境変数を設定または変更した後は、プロジェクトを再デプロイする必要があります。
+
+#### 4. Blob Storageを有効化（重要）
+
+音楽・画像ファイルのアップロード機能を使用するには、Vercel Blob Storageを有効化する必要があります。
+
+1. Vercelダッシュボード → プロジェクト → **Storage** タブ
+2. **Blob** をクリック → **Create Blob Store**
+3. ストア名を入力（例: `kaleido-ai-music-blob`）
+4. **Create** をクリック
+5. 生成された `BLOB_READ_WRITE_TOKEN` をコピーして環境変数に設定
+
+#### 5. デプロイ
+
+環境変数の設定が完了したら、**Deployments** タブから「Redeploy」をクリックして再デプロイします。
 
 ## 開発状況
 
@@ -243,13 +293,52 @@ DATABASE_URL="postgresql://user:password@ep-xxx-xxx.us-east-2.aws.neon.tech/neon
 
 #### Vercel Blob Storageエラー
 
-**問題**: `Error: BLOB_READ_WRITE_TOKEN is not defined`
+**問題**: `Error: BLOB_READ_WRITE_TOKEN is not defined` または `Vercel Blob: No token found`
 
-**解決方法**:
+このエラーは、音楽・画像ファイルのアップロード時に `BLOB_READ_WRITE_TOKEN` 環境変数が設定されていない場合に発生します。
 
-1. Vercelダッシュボードで Blob Storage を有効化
-2. `.env.local` に正しいトークンを設定
-3. ローカル開発の場合、Vercel CLIで `vercel env pull .env.local` を実行
+**解決方法（本番環境）**:
+
+1. **Vercelダッシュボードで Blob Storage を有効化**
+   - Vercelダッシュボード → プロジェクト → **Storage** タブ
+   - **Blob** → **Create Blob Store**
+   - ストア名を入力して作成
+
+2. **環境変数を設定**
+   - **Settings** → **Environment Variables**
+   - Name: `BLOB_READ_WRITE_TOKEN`
+   - Value: Blob Storageから取得したトークン（`vercel_blob_rw_...` で始まる文字列）
+   - Environment: **Production**, Preview, Development（全て選択）
+
+3. **プロジェクトを再デプロイ**
+   - **Deployments** タブ → 最新のデプロイ → **⋯** メニュー → **Redeploy**
+   - 環境変数の変更は再デプロイしないと反映されません
+
+**解決方法（ローカル開発）**:
+
+1. `.env.local` ファイルに正しいトークンを設定
+   ```bash
+   BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
+   ```
+
+2. Vercel CLIで環境変数を取得（推奨）
+   ```bash
+   # Vercelプロジェクトとリンク
+   vercel link
+
+   # 本番環境の環境変数を取得
+   vercel env pull .env.local
+   ```
+
+**確認方法**:
+
+```bash
+# 環境変数が設定されているか確認
+vercel env ls
+
+# または、ローカルで確認
+cat .env.local | grep BLOB_READ_WRITE_TOKEN
+```
 
 #### ビルドエラー (Type errors)
 
