@@ -9,11 +9,7 @@ interface MusicGridProps {
 
 export function MusicGrid({ musicList }: MusicGridProps) {
   if (musicList.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">音楽が見つかりませんでした</p>
-      </div>
-    );
+    return null;
   }
 
   return (
