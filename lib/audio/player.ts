@@ -168,34 +168,32 @@ export class AudioPlayer {
     }
   }
 
-  play(): void {
+  async play(): Promise<void> {
     if (!this.audioElement || !this.audioContext) return;
 
     console.log('[AudioPlayer] Play called, audio context state:', this.audioContext.state);
     console.log('[AudioPlayer] Audio element paused:', this.audioElement.paused, 'ended:', this.audioElement.ended);
     console.log('[AudioPlayer] Audio element src:', this.audioElement.src);
 
-    // Resume audio context if suspended
+    // Resume audio context if suspended and WAIT for it to be running
     if (this.audioContext.state === 'suspended') {
-      console.log('[AudioPlayer] Resuming audio context');
-      this.audioContext.resume().then(() => {
-        console.log('[AudioPlayer] Audio context resumed, state:', this.audioContext?.state);
-      });
+      console.log('[AudioPlayer] Resuming audio context...');
+      await this.audioContext.resume();
+      console.log('[AudioPlayer] Audio context resumed, state:', this.audioContext.state);
     }
 
-    // Play the audio
-    this.audioElement.play()
-      .then(() => {
-        console.log('[AudioPlayer] Play started successfully');
-        console.log('[AudioPlayer] After play - paused:', this.audioElement?.paused, 'ended:', this.audioElement?.ended);
-        console.log('[AudioPlayer] Current time:', this.audioElement?.currentTime, 'Duration:', this.audioElement?.duration);
+    // Play the audio (AudioContext is now guaranteed to be running)
+    try {
+      await this.audioElement.play();
+      console.log('[AudioPlayer] Play started successfully');
+      console.log('[AudioPlayer] After play - paused:', this.audioElement.paused, 'ended:', this.audioElement.ended);
+      console.log('[AudioPlayer] Current time:', this.audioElement.currentTime, 'Duration:', this.audioElement.duration);
 
-        // Start time tracking with requestAnimationFrame
-        this.startTimeTracking();
-      })
-      .catch((error) => {
-        console.error('[AudioPlayer] Failed to play audio:', error);
-      });
+      // Start time tracking with requestAnimationFrame
+      this.startTimeTracking();
+    } catch (error) {
+      console.error('[AudioPlayer] Failed to play audio:', error);
+    }
   }
 
   pause(): void {
