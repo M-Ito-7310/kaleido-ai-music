@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getMusicById, incrementPlayCount } from '@/lib/db/queries';
 import { MusicPlayer } from '@/components/music/MusicPlayer';
 import { DownloadButton } from '@/components/music/DownloadButton';
-import { Clock, TrendingUp, Calendar } from 'lucide-react';
+import { Clock, TrendingUp, Calendar, ExternalLink } from 'lucide-react';
 import { formatDuration } from '@/lib/utils';
 import { PageTransition } from '@/components/ui/PageTransition';
 import Image from 'next/image';
@@ -106,6 +106,24 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                     {music.description}
                   </p>
+                </div>
+              )}
+
+              {/* 共有リンク */}
+              {music.shareLink && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    オリジナル
+                  </h3>
+                  <a
+                    href={music.shareLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    <span>生成元のサービスで表示</span>
+                  </a>
                 </div>
               )}
 

@@ -23,6 +23,7 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
     category: '',
     tags: '',
     mood: '',
+    shareLink: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,6 +73,7 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
         mood: formData.mood || undefined,
+        shareLink: formData.shareLink || undefined,
       };
 
       // 3. データベースに保存（管理者専用API使用）
@@ -226,15 +228,30 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
       </div>
 
       {/* オプション情報 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">ムード</label>
-        <input
-          type="text"
-          value={formData.mood}
-          onChange={(e) => setFormData({ ...formData, mood: e.target.value })}
-          placeholder="例: リラックス, エネルギッシュ"
-          className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">ムード</label>
+          <input
+            type="text"
+            value={formData.mood}
+            onChange={(e) => setFormData({ ...formData, mood: e.target.value })}
+            placeholder="例: リラックス, エネルギッシュ"
+            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            共有リンク（任意）
+          </label>
+          <input
+            type="url"
+            value={formData.shareLink}
+            onChange={(e) => setFormData({ ...formData, shareLink: e.target.value })}
+            placeholder="例: https://suno.com/song/..."
+            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+        </div>
       </div>
 
       {/* 送信ボタン */}
