@@ -2,8 +2,16 @@ import Link from 'next/link';
 import { ArrowRight, Music, Headphones, Download, Sparkles, ExternalLink, QrCode } from 'lucide-react';
 import { ScaleTransition } from '@/components/ui/PageTransition';
 import { QRCodeDisplay } from '@/components/qr/QRCodeDisplay';
+import { MusicCard } from '@/components/music/MusicCard';
+import { getMusicList } from '@/lib/db/queries';
 
-export default function HomePage() {
+export default async function HomePage() {
+  // 再生数上位3曲を取得
+  const popularMusic = await getMusicList({
+    sortBy: 'popular',
+    limit: 3,
+    offset: 0,
+  });
   return (
     <ScaleTransition className="bg-white dark:bg-gray-900">
       {/* ヒーローセクション */}
@@ -87,7 +95,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 人気音楽セクション（サーバーコンポーネント版は後で実装） */}
+      {/* 人気音楽セクション */}
       <section className="bg-gray-50 dark:bg-gray-800 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
@@ -98,6 +106,19 @@ export default function HomePage() {
               再生回数の多い人気のAI音楽をチェック
             </p>
           </div>
+
+          {/* 上位3曲のカード表示 */}
+          {popularMusic.length > 0 ? (
+            <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+              {popularMusic.map((music, index) => (
+                <MusicCard key={music.id} music={music} index={index} playlist={popularMusic} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-16 text-center">
+              <p className="text-gray-500 dark:text-gray-400">まだ音楽がありません</p>
+            </div>
+          )}
 
           <div className="mt-16 text-center">
             <Link
