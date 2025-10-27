@@ -1,34 +1,75 @@
 import { AudioProcessor, type AudioSettings, DEFAULT_AUDIO_SETTINGS } from './audioProcessor';
 
+/**
+ * HTMLAudioElement-based audio player with Web Audio API integration
+ * This implementation avoids CORS issues with Vercel Blob Storage
+ * while maintaining audio effects capabilities
+ */
 export class AudioPlayer {
   private audioContext: AudioContext | null = null;
-  private source: AudioBufferSourceNode | null = null;
+  private audioElement: HTMLAudioElement | null = null;
+  private sourceNode: MediaElementAudioSourceNode | null = null;
   private gainNode: GainNode | null = null;
   private audioProcessor: AudioProcessor | null = null;
-  private audioBuffer: AudioBuffer | null = null;
-  private startTime: number = 0;
-  private pauseTime: number = 0;
-  private isPlaying: boolean = false;
   private audioSettings: AudioSettings = DEFAULT_AUDIO_SETTINGS;
 
   constructor() {
     if (typeof window !== 'undefined') {
+      // Create HTML Audio Element
+      this.audioElement = new Audio();
+      this.audioElement.crossOrigin = 'anonymous'; // Enable CORS for Web Audio API
+      this.audioElement.preload = 'auto';
+
+      // Create Web Audio API context
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+      // Create source node from audio element
+      this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
+
+      // Create gain node for volume control
       this.gainNode = this.audioContext.createGain();
+
+      // Create audio processor for effects
       this.audioProcessor = new AudioProcessor(this.audioContext);
 
-      // Connect: gain → processor → destination
+      // Connect: sourceNode → gainNode → processor → destination
+      this.sourceNode.connect(this.gainNode);
       this.gainNode.connect(this.audioProcessor.getOutputNode());
     }
   }
 
   async loadTrack(url: string): Promise<void> {
-    if (!this.audioContext) return;
+    if (!this.audioElement) return;
 
     try {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      // Set the audio source
+      this.audioElement.src = url;
+
+      // Wait for metadata to be loaded to get duration
+      await new Promise<void>((resolve, reject) => {
+        if (!this.audioElement) {
+          reject(new Error('Audio element not initialized'));
+          return;
+        }
+
+        const onLoadedMetadata = () => {
+          this.audioElement?.removeEventListener('loadedmetadata', onLoadedMetadata);
+          this.audioElement?.removeEventListener('error', onError);
+          resolve();
+        };
+
+        const onError = (e: ErrorEvent | Event) => {
+          this.audioElement?.removeEventListener('loadedmetadata', onLoadedMetadata);
+          this.audioElement?.removeEventListener('error', onError);
+          reject(new Error('Failed to load audio'));
+        };
+
+        this.audioElement.addEventListener('loadedmetadata', onLoadedMetadata);
+        this.audioElement.addEventListener('error', onError);
+
+        // Load the audio
+        this.audioElement.load();
+      });
     } catch (error) {
       console.error('Failed to load audio:', error);
       throw error;
@@ -36,65 +77,55 @@ export class AudioPlayer {
   }
 
   play(): void {
-    if (!this.audioContext || !this.audioBuffer || !this.gainNode) return;
+    if (!this.audioElement || !this.audioContext) return;
 
+    // Resume audio context if suspended
     if (this.audioContext.state === 'suspended') {
       this.audioContext.resume();
     }
 
-    this.source = this.audioContext.createBufferSource();
-    this.source.buffer = this.audioBuffer;
-    this.source.connect(this.gainNode);
-
-    this.startTime = this.audioContext.currentTime - this.pauseTime;
-    this.source.start(0, this.pauseTime);
-    this.isPlaying = true;
+    // Play the audio
+    this.audioElement.play().catch((error) => {
+      console.error('Failed to play audio:', error);
+    });
   }
 
   pause(): void {
-    if (!this.source || !this.audioContext) return;
-
-    this.pauseTime = this.audioContext.currentTime - this.startTime;
-    this.source.stop();
-    this.isPlaying = false;
+    if (!this.audioElement) return;
+    this.audioElement.pause();
   }
 
   stop(): void {
-    if (this.source) {
-      this.source.stop();
-      this.source = null;
-    }
-    this.pauseTime = 0;
-    this.startTime = 0;
-    this.isPlaying = false;
+    if (!this.audioElement) return;
+    this.audioElement.pause();
+    this.audioElement.currentTime = 0;
   }
 
   setVolume(volume: number): void {
     if (this.gainNode) {
       this.gainNode.gain.value = Math.max(0, Math.min(1, volume));
     }
-  }
-
-  getCurrentTime(): number {
-    if (!this.audioContext) return 0;
-    return this.isPlaying ? this.audioContext.currentTime - this.startTime : this.pauseTime;
-  }
-
-  getDuration(): number {
-    return this.audioBuffer?.duration || 0;
-  }
-
-  seek(time: number): void {
-    const wasPlaying = this.isPlaying;
-    this.stop();
-    this.pauseTime = Math.max(0, Math.min(time, this.getDuration()));
-    if (wasPlaying) {
-      this.play();
+    if (this.audioElement) {
+      this.audioElement.volume = Math.max(0, Math.min(1, volume));
     }
   }
 
+  getCurrentTime(): number {
+    return this.audioElement?.currentTime || 0;
+  }
+
+  getDuration(): number {
+    return this.audioElement?.duration || 0;
+  }
+
+  seek(time: number): void {
+    if (!this.audioElement) return;
+    this.audioElement.currentTime = Math.max(0, Math.min(time, this.getDuration()));
+  }
+
   getIsPlaying(): boolean {
-    return this.isPlaying;
+    if (!this.audioElement) return false;
+    return !this.audioElement.paused && !this.audioElement.ended;
   }
 
   /**
@@ -116,12 +147,28 @@ export class AudioPlayer {
 
   destroy(): void {
     this.stop();
+
+    // Disconnect audio nodes
+    if (this.sourceNode) {
+      this.sourceNode.disconnect();
+    }
+    if (this.gainNode) {
+      this.gainNode.disconnect();
+    }
     if (this.audioProcessor) {
       this.audioProcessor.disconnect();
     }
+
+    // Close audio context
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = null;
+    }
+
+    // Clean up audio element
+    if (this.audioElement) {
+      this.audioElement.src = '';
+      this.audioElement = null;
     }
   }
 }
