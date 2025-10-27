@@ -133,8 +133,18 @@ export async function getMusicCount(filter: Omit<MusicFilter, 'limit' | 'offset'
  */
 export async function getMusicById(id: number) {
   console.log('🔍 QUERY DEBUG - Fetching music with ID:', id);
+
+  // 生のSQLクエリでも試してみる
+  const rawResult = await db.execute(sql`
+    SELECT id, title, artist, description, audio_url, image_url, duration, file_size,
+           category, tags, ai_platform, share_link, genre, mood, tempo,
+           play_count, download_count, is_published, created_at, updated_at
+    FROM music WHERE id = ${id} LIMIT 1
+  `);
+  console.log('🔍 QUERY DEBUG - Raw SQL result:', JSON.stringify(rawResult.rows, null, 2));
+
   const result = await db.select().from(music).where(eq(music.id, id)).limit(1);
-  console.log('🔍 QUERY DEBUG - Raw result from DB:', JSON.stringify(result, null, 2));
+  console.log('🔍 QUERY DEBUG - Drizzle result:', JSON.stringify(result, null, 2));
   console.log('🔍 QUERY DEBUG - result[0]?.aiPlatform:', result[0]?.aiPlatform);
   console.log('🔍 QUERY DEBUG - result[0]?.ai_platform:', (result[0] as any)?.ai_platform);
   return result[0] || null;
