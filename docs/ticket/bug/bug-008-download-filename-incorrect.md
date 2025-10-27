@@ -62,7 +62,7 @@ const filename = `${artist} - ${title}.mp3`.replace(/[^a-zA-Z0-9\s\-_.]/g, '_');
 
 **実施完了**: 2025-10-27 21:35
 
-- [x] 修正コミット: （次のコミットで記録）
+- [x] 修正コミット: a55ba8e, 22c1436, 86c740b
 - [x] 影響範囲: `components/music/DownloadButton.tsx` のみ
 - [x] テスト実施: 本番環境で動作確認予定
 
@@ -103,7 +103,7 @@ const filename = `${title}.mp3`
 ### 完了記録
 完了日時: 2025-10-27 22:00
 実績時間: 約30分
-Git commit: a55ba8e, 22c1436
+Git commit: a55ba8e, 22c1436, 86c740b
 
 #### 最終確認
 - [x] バグが完全に修正されている
