@@ -151,15 +151,11 @@ export async function getCategories() {
  * musicテーブルのJSONフィールドから動的に集計
  */
 export async function getTags(limit?: number) {
-  console.log('[DEBUG] getTags - limit:', limit);
-
   // 全ての公開済み音楽を取得
   const allMusic = await db
     .select({ tags: music.tags })
     .from(music)
     .where(eq(music.isPublished, 1));
-
-  console.log('[DEBUG] getTags - allMusic count:', allMusic.length);
 
   // タグを集計
   const tagCounts = new Map<string, number>();
@@ -173,8 +169,6 @@ export async function getTags(limit?: number) {
     }
   });
 
-  console.log('[DEBUG] getTags - unique tags count:', tagCounts.size);
-
   // Map を配列に変換し、カウント順にソート
   const sortedTags = Array.from(tagCounts.entries())
     .map(([name, count]) => ({
@@ -187,12 +181,7 @@ export async function getTags(limit?: number) {
     .sort((a, b) => b.count - a.count);
 
   // limit が指定されている場合は上位N件のみ返す
-  const result = limit ? sortedTags.slice(0, limit) : sortedTags;
-
-  console.log('[DEBUG] getTags - result count:', result.length);
-  console.log('[DEBUG] getTags - result:', result);
-
-  return result;
+  return limit ? sortedTags.slice(0, limit) : sortedTags;
 }
 
 /**
