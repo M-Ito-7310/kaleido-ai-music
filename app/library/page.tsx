@@ -57,7 +57,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const [musicList, categoriesList, tagsList] = await Promise.all([
     getMusicList({ category, tags, search, sortBy, limit, offset }),
     getCategories(),
-    getTags(50),
+    getTags(10),
   ]);
 
   return (
