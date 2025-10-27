@@ -28,6 +28,12 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
     notFound();
   }
 
+  // デバッグ用：サーバー側で取得したデータをログ出力
+  console.log('🔍 SERVER DEBUG - Music ID:', musicId);
+  console.log('🔍 SERVER DEBUG - music.aiPlatform:', music.aiPlatform);
+  console.log('🔍 SERVER DEBUG - music.shareLink:', music.shareLink);
+  console.log('🔍 SERVER DEBUG - Full music object:', JSON.stringify(music, null, 2));
+
   // 再生回数をインクリメント
   await incrementPlayCount(musicId);
 
