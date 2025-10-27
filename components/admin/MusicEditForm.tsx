@@ -85,13 +85,6 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
       if (formData.aiPlatform) updateData.aiPlatform = formData.aiPlatform;
       if (formData.shareLink) updateData.shareLink = formData.shareLink;
 
-      // デバッグ用：送信データをコンソールに出力
-      console.log('🔍 DEBUG - Form Data:', formData);
-      console.log('🔍 DEBUG - Update Data (送信内容):', updateData);
-      console.log('🔍 DEBUG - aiPlatform value:', formData.aiPlatform, 'Type:', typeof formData.aiPlatform);
-      console.log('🔍 DEBUG - Update Data contains aiPlatform?', 'aiPlatform' in updateData, 'Value:', updateData.aiPlatform);
-      console.log('🔍 DEBUG - JSON stringify:', JSON.stringify(updateData, null, 2));
-
       const updateRes = await fetch(`/api/admin/music/${music.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },

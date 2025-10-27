@@ -123,23 +123,11 @@ export async function PATCH(
 
     const body = await request.json();
 
-    // デバッグ用：受信データをログ出力
-    console.log('🔍 API DEBUG - Received body:', JSON.stringify(body, null, 2));
-    console.log('🔍 API DEBUG - aiPlatform in body:', body.aiPlatform);
-
     // バリデーション
     const validatedData = updateMusicSchema.parse(body);
 
-    // デバッグ用：バリデーション後のデータをログ出力
-    console.log('🔍 API DEBUG - Validated data:', JSON.stringify(validatedData, null, 2));
-    console.log('🔍 API DEBUG - aiPlatform in validatedData:', validatedData.aiPlatform);
-
     // 音楽を更新
     const updatedMusic = await updateMusic(musicId, validatedData);
-
-    // デバッグ用：更新後のデータをログ出力
-    console.log('🔍 API DEBUG - Updated music:', JSON.stringify(updatedMusic, null, 2));
-    console.log('🔍 API DEBUG - aiPlatform in updatedMusic:', updatedMusic.aiPlatform);
 
     return NextResponse.json({
       success: true,

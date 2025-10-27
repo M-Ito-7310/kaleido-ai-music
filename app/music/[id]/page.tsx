@@ -28,12 +28,6 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
     notFound();
   }
 
-  // デバッグ用：サーバー側で取得したデータをログ出力
-  console.log('🔍 SERVER DEBUG - Music ID:', musicId);
-  console.log('🔍 SERVER DEBUG - music.aiPlatform:', music.aiPlatform);
-  console.log('🔍 SERVER DEBUG - music.shareLink:', music.shareLink);
-  console.log('🔍 SERVER DEBUG - Full music object:', JSON.stringify(music, null, 2));
-
   // 再生回数をインクリメント
   await incrementPlayCount(musicId);
 
@@ -131,14 +125,10 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                     <ExternalLink className="h-4 w-4" />
                     <span>生成元のサービスで表示</span>
                   </a>
-                  {/* デバッグ用：aiPlatformの値を表示 */}
-                  <p className="mt-2 text-xs text-red-500 font-mono">
-                    DEBUG - aiPlatform: &quot;{music.aiPlatform || 'null'}&quot; | Type: {typeof music.aiPlatform}
-                  </p>
                   {/* Suno AI楽曲の場合のみエンゲージメント促進メッセージを表示 */}
                   {music.aiPlatform === "Suno AI" && (
                     <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                      Suno AI プラットフォームで個の楽曲の高評価とコメントをお願いします！
+                      Suno AI プラットフォームでこの楽曲の高評価とコメントをお願いします！
                     </p>
                   )}
                 </div>
