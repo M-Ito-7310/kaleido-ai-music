@@ -50,10 +50,11 @@ export class AudioPlayer {
       // Create audio processor for effects
       this.audioProcessor = new AudioProcessor(this.audioContext);
 
-      // Connect: sourceNode → gainNode → processor → destination
+      // Connect: sourceNode → gainNode → destination
+      // Bypassing AudioProcessor temporarily to isolate the issue
       this.sourceNode.connect(this.gainNode);
-      this.gainNode.connect(this.audioProcessor.getOutputNode());
-      console.log('[AudioPlayer] Audio nodes connected');
+      this.gainNode.connect(this.audioContext.destination);
+      console.log('[AudioPlayer] Audio nodes connected (direct to destination)');
     }
   }
 
