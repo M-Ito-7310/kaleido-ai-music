@@ -150,13 +150,21 @@ export async function getCategories() {
  * タグ一覧を取得
  */
 export async function getTags(limit?: number) {
+  console.log('[DEBUG] getTags - limit:', limit);
+
   const query = db.select().from(tags).orderBy(desc(tags.count));
 
+  let result;
   if (limit) {
-    return await query.limit(limit);
+    result = await query.limit(limit);
+  } else {
+    result = await query;
   }
 
-  return await query;
+  console.log('[DEBUG] getTags - result count:', result.length);
+  console.log('[DEBUG] getTags - result:', result);
+
+  return result;
 }
 
 /**
