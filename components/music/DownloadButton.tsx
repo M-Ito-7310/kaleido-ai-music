@@ -27,8 +27,11 @@ export function DownloadButton({ musicId, audioUrl, title, artist }: DownloadBut
       const response = await fetch(audioUrl);
       const blob = await response.blob();
 
-      // ファイル名を生成
-      const filename = `${artist} - ${title}.mp3`.replace(/[^a-zA-Z0-9\s\-_.]/g, '_');
+      // ファイル名を生成（日本語対応）
+      const filename = `${artist} - ${title}.mp3`
+        .replace(/[<>:"/\\|?*]/g, '') // ファイルシステムで禁止されている文字を除去
+        .replace(/\s+/g, ' ')          // 複数の空白を1つに
+        .trim();                       // 前後の空白を削除
 
       // ダウンロードリンクを作成
       const url = window.URL.createObjectURL(blob);
