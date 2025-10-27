@@ -12,6 +12,8 @@ export class AudioPlayer {
   private gainNode: GainNode | null = null;
   private audioProcessor: AudioProcessor | null = null;
   private audioSettings: AudioSettings = DEFAULT_AUDIO_SETTINGS;
+  private onTimeUpdateCallback: ((time: number) => void) | null = null;
+  private onEndedCallback: (() => void) | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -19,6 +21,11 @@ export class AudioPlayer {
       this.audioElement = new Audio();
       this.audioElement.crossOrigin = 'anonymous'; // Enable CORS for Web Audio API
       this.audioElement.preload = 'auto';
+
+      // Add event listeners
+      this.audioElement.addEventListener('timeupdate', this.handleTimeUpdate);
+      this.audioElement.addEventListener('ended', this.handleEnded);
+      this.audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata);
 
       // Create Web Audio API context
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -36,6 +43,30 @@ export class AudioPlayer {
       this.sourceNode.connect(this.gainNode);
       this.gainNode.connect(this.audioProcessor.getOutputNode());
     }
+  }
+
+  private handleTimeUpdate = () => {
+    if (this.onTimeUpdateCallback && this.audioElement) {
+      this.onTimeUpdateCallback(this.audioElement.currentTime);
+    }
+  };
+
+  private handleEnded = () => {
+    if (this.onEndedCallback) {
+      this.onEndedCallback();
+    }
+  };
+
+  private handleLoadedMetadata = () => {
+    // Metadata loaded - duration is now available
+  };
+
+  onTimeUpdate(callback: (time: number) => void) {
+    this.onTimeUpdateCallback = callback;
+  }
+
+  onEnded(callback: () => void) {
+    this.onEndedCallback = callback;
   }
 
   async loadTrack(url: string): Promise<void> {
@@ -111,11 +142,15 @@ export class AudioPlayer {
   }
 
   getCurrentTime(): number {
-    return this.audioElement?.currentTime || 0;
+    if (!this.audioElement) return 0;
+    const time = this.audioElement.currentTime;
+    return isNaN(time) ? 0 : time;
   }
 
   getDuration(): number {
-    return this.audioElement?.duration || 0;
+    if (!this.audioElement) return 0;
+    const duration = this.audioElement.duration;
+    return isNaN(duration) || !isFinite(duration) ? 0 : duration;
   }
 
   seek(time: number): void {
@@ -148,6 +183,13 @@ export class AudioPlayer {
   destroy(): void {
     this.stop();
 
+    // Remove event listeners
+    if (this.audioElement) {
+      this.audioElement.removeEventListener('timeupdate', this.handleTimeUpdate);
+      this.audioElement.removeEventListener('ended', this.handleEnded);
+      this.audioElement.removeEventListener('loadedmetadata', this.handleLoadedMetadata);
+    }
+
     // Disconnect audio nodes
     if (this.sourceNode) {
       this.sourceNode.disconnect();
@@ -170,5 +212,9 @@ export class AudioPlayer {
       this.audioElement.src = '';
       this.audioElement = null;
     }
+
+    // Clear callbacks
+    this.onTimeUpdateCallback = null;
+    this.onEndedCallback = null;
   }
 }

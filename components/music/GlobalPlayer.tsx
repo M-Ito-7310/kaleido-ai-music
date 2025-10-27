@@ -41,6 +41,13 @@ export function GlobalPlayer() {
   useEffect(() => {
     audioPlayerRef.current = new AudioPlayer();
 
+    // Setup timeupdate event listener
+    audioPlayerRef.current.onTimeUpdate((time) => {
+      setCurrentTime(time);
+      const duration = audioPlayerRef.current?.getDuration() || 0;
+      updatePositionState(duration, time);
+    });
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -48,7 +55,31 @@ export function GlobalPlayer() {
       audioPlayerRef.current?.destroy();
       clearMediaSession();
     };
-  }, []);
+  }, [setCurrentTime]);
+
+  // Setup ended event listener (depends on repeatMode, playlist, playNext, togglePlayPause)
+  useEffect(() => {
+    if (!audioPlayerRef.current) return;
+
+    audioPlayerRef.current.onEnded(() => {
+      if (repeatMode === 'one') {
+        // Repeat current track
+        audioPlayerRef.current?.seek(0);
+        setCurrentTime(0);
+        audioPlayerRef.current?.play();
+      } else if (playlist.length > 1) {
+        playNext();
+      } else if (repeatMode === 'all') {
+        // Repeat all but only one track
+        audioPlayerRef.current?.seek(0);
+        setCurrentTime(0);
+        audioPlayerRef.current?.play();
+      } else {
+        togglePlayPause();
+        setCurrentTime(0);
+      }
+    });
+  }, [repeatMode, playlist.length, playNext, togglePlayPause, setCurrentTime]);
 
   // トラック変更時の処理
   useEffect(() => {
@@ -117,45 +148,8 @@ export function GlobalPlayer() {
     }
   }, [isPlaying]);
 
-  // 再生位置の更新
-  useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(() => {
-        const time = audioPlayerRef.current?.getCurrentTime() || 0;
-        const currentDuration = audioPlayerRef.current?.getDuration() || 0;
-        setCurrentTime(time);
-        updatePositionState(currentDuration, time);
-
-        // トラック終了時の処理
-        if (time >= currentDuration && currentDuration > 0) {
-          if (repeatMode === 'one') {
-            // リピート1: 現在のトラックを再生
-            audioPlayerRef.current?.seek(0);
-            setCurrentTime(0);
-          } else if (playlist.length > 1) {
-            playNext();
-          } else if (repeatMode === 'all') {
-            // リピートオールだがプレイリストが1曲の場合、最初に戻る
-            audioPlayerRef.current?.seek(0);
-            setCurrentTime(0);
-          } else {
-            togglePlayPause();
-            setCurrentTime(0);
-          }
-        }
-      }, 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isPlaying, playlist.length, playNext, togglePlayPause, setCurrentTime, repeatMode]);
+  // Note: 再生位置の更新はHTMLAudioElementのtimeupdateイベントで自動的に行われます
+  // setIntervalは不要になりました
 
   const handleExpand = () => {
     setIsFullScreen(true);
