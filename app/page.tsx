@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Music, Headphones, Download } from 'lucide-react';
+import { ArrowRight, Music, Headphones, Download, Sparkles, ExternalLink } from 'lucide-react';
 import { ScaleTransition } from '@/components/ui/PageTransition';
 
 export default function HomePage() {
@@ -107,6 +107,42 @@ export default function HomePage() {
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Suno AI招待セクション */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 dark:from-purple-950 to-pink-50 dark:to-pink-950">
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="text-center">
+            <div className="flex justify-center mb-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl font-display">
+              Suno AIで音楽を生成しよう
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Suno AIは、テキストから高品質な音楽を生成できるAIツールです。
+              あなたもAI音楽クリエイターになりませんか？
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <a
+                href="https://suno.com/invite/@masato_kaleidofuture"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-500 dark:to-pink-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:from-purple-500 hover:to-pink-500 dark:hover:from-purple-400 dark:hover:to-pink-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-all"
+              >
+                Suno AIを試す
+                <ExternalLink className="h-5 w-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* 装飾 */}
+        <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+          <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-purple-300 to-pink-300 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
         </div>
       </section>
     </ScaleTransition>
