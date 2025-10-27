@@ -133,7 +133,8 @@ export function GlobalPlayer() {
         }
       );
     });
-  }, [currentTrack, isPlaying, togglePlayPause, playNext, playPrevious, playlist.length, setCurrentTime, setDuration]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTrack?.id]);
 
   // 再生状態の変更
   useEffect(() => {

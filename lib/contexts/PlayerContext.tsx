@@ -130,19 +130,25 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         const shuffled = shuffleArray(playlist);
         setPlaylistState(shuffled);
 
-        // Find current track in shuffled playlist
+        // Find current track in shuffled playlist and update index
+        // Note: Don't update currentTrack to avoid triggering track reload
         if (currentTrack) {
           const newIndex = shuffled.findIndex((t) => t.id === currentTrack.id);
-          setCurrentIndex(newIndex !== -1 ? newIndex : 0);
+          if (newIndex !== -1) {
+            setCurrentIndex(newIndex);
+          }
         }
       } else {
         // Disable shuffle: restore original order
         setPlaylistState(originalPlaylist);
 
-        // Find current track in original playlist
+        // Find current track in original playlist and update index
+        // Note: Don't update currentTrack to avoid triggering track reload
         if (currentTrack) {
           const newIndex = originalPlaylist.findIndex((t) => t.id === currentTrack.id);
-          setCurrentIndex(newIndex !== -1 ? newIndex : 0);
+          if (newIndex !== -1) {
+            setCurrentIndex(newIndex);
+          }
         }
       }
 
