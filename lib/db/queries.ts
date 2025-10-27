@@ -132,7 +132,11 @@ export async function getMusicCount(filter: Omit<MusicFilter, 'limit' | 'offset'
  * 音楽詳細を取得
  */
 export async function getMusicById(id: number) {
+  console.log('🔍 QUERY DEBUG - Fetching music with ID:', id);
   const result = await db.select().from(music).where(eq(music.id, id)).limit(1);
+  console.log('🔍 QUERY DEBUG - Raw result from DB:', JSON.stringify(result, null, 2));
+  console.log('🔍 QUERY DEBUG - result[0]?.aiPlatform:', result[0]?.aiPlatform);
+  console.log('🔍 QUERY DEBUG - result[0]?.ai_platform:', (result[0] as any)?.ai_platform);
   return result[0] || null;
 }
 
