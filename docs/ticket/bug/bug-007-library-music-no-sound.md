@@ -133,10 +133,28 @@ HTMLAudioElement → MediaElementAudioSourceNode → GainNode → AudioProcessor
 - 長時間の音楽ストリーミング再生には`HTMLAudioElement`が推奨される
 - `MediaElementAudioSourceNode`を使うことで、両方の利点を活用できる
 
+### 追加修正履歴
+
+**2025-10-27 - timeupdate問題の修正 (Commit: ccd1912)**
+- `timeupdate`イベントが`MediaElementAudioSourceNode`使用時に不安定だった
+- `requestAnimationFrame`ベースの時間追跡に変更
+- 60fpsで安定した更新を実現
+
+**2025-10-27 - AudioContext.resume()の非同期化 (Commit: e7b5ba4)**
+- `AudioContext.resume()`を`await`で待機するように修正
+- AudioContextが完全に`running`状態になってから`play()`を実行
+
+**2025-10-27 - AudioProcessor接続のバイパス (Commit: b8dd909)**
+- `currentTime`が0のまま進まない問題を診断中
+- AudioProcessorの複雑なノードチェーン（EQ、リバーブ、ディレイ）をバイパス
+- `gainNode`から直接`audioContext.destination`に接続してテスト
+- これにより、AudioProcessorのノード接続が問題かどうかを切り分け
+
 ### 本番環境での確認事項
 - Vercel Blobの`access: 'public'`設定により、音声ファイルは公開URLで直接アクセス可能
 - `crossorigin="anonymous"`により、CORSヘッダーなしでも再生可能（Web Audio APIとの接続は可能）
 - 本番環境でデプロイ後、実際に音声が再生されることを確認する必要あり
+- **最新**: AudioProcessorをバイパスした状態で音声再生とcurrentTime進行を確認
 
 ## 🔗 関連
 
