@@ -202,17 +202,24 @@ export async function getTags(limit?: number) {
     .from(music)
     .where(eq(music.isPublished, 1));
 
+  // デバッグ: 取得したデータを確認
+  console.log('getTags - allMusic count:', allMusic.length);
+  console.log('getTags - allMusic data:', JSON.stringify(allMusic, null, 2));
+
   // タグを集計
   const tagCounts = new Map<string, number>();
 
   allMusic.forEach((musicItem) => {
     const musicTags = musicItem.tags as string[] | null;
+    console.log('Processing tags:', musicTags);
     if (Array.isArray(musicTags)) {
       musicTags.forEach((tag) => {
         tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
       });
     }
   });
+
+  console.log('getTags - tagCounts:', Array.from(tagCounts.entries()));
 
   // Map を配列に変換し、カウント順にソート
   const sortedTags = Array.from(tagCounts.entries())
