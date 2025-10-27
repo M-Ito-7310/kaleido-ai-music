@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { ArrowRight, Music, Headphones, Download, Sparkles, ExternalLink } from 'lucide-react';
+import { ArrowRight, Music, Headphones, Download, Sparkles, ExternalLink, QrCode } from 'lucide-react';
 import { ScaleTransition } from '@/components/ui/PageTransition';
+import { QRCodeDisplay } from '@/components/qr/QRCodeDisplay';
 
 export default function HomePage() {
   return (
@@ -126,7 +127,7 @@ export default function HomePage() {
               Suno AIは、テキストから高品質な音楽を生成できるAIツールです。
               あなたもAI音楽クリエイターになりませんか？
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="mt-10 flex flex-col items-center gap-8">
               <a
                 href="https://suno.com/invite/@masato_kaleidofuture"
                 target="_blank"
@@ -136,6 +137,19 @@ export default function HomePage() {
                 Suno AIを試す
                 <ExternalLink className="h-5 w-5" />
               </a>
+
+              {/* QRコード */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <QrCode className="h-5 w-5" />
+                  <span className="text-sm font-semibold">スマートフォンでアクセス</span>
+                </div>
+                <QRCodeDisplay
+                  value="https://suno.com/invite/@masato_kaleidofuture"
+                  size={180}
+                  label="Suno AI 招待URL"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -143,6 +157,27 @@ export default function HomePage() {
         {/* 装飾 */}
         <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
           <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-purple-300 to-pink-300 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
+        </div>
+      </section>
+
+      {/* ホームページQRコードセクション */}
+      <section className="py-24 sm:py-32 bg-gray-50 dark:bg-gray-800">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl font-display">
+              このサイトをスマートフォンで開く
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              QRコードをスキャンして、スマートフォンでKaleido AI Musicにアクセスできます
+            </p>
+            <div className="mt-12 flex justify-center">
+              <QRCodeDisplay
+                value="https://kaleidoaimusic.kaleidofuture.com/"
+                size={200}
+                label="Kaleido AI Music トップページ"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </ScaleTransition>

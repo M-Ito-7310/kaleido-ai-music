@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { getMusicById, incrementPlayCount } from '@/lib/db/queries';
 import { MusicPlayer } from '@/components/music/MusicPlayer';
 import { DownloadButton } from '@/components/music/DownloadButton';
-import { Clock, TrendingUp, Calendar, ExternalLink } from 'lucide-react';
+import { Clock, TrendingUp, Calendar, ExternalLink, QrCode } from 'lucide-react';
 import { formatDuration } from '@/lib/utils';
 import { PageTransition } from '@/components/ui/PageTransition';
+import { QRCodeDisplay } from '@/components/qr/QRCodeDisplay';
 import Image from 'next/image';
 
 interface MusicDetailPageProps {
@@ -144,6 +145,35 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                 title={music.title}
                 artist={music.artist}
               />
+            </div>
+          </div>
+
+          {/* QRコードセクション */}
+          <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 text-center flex items-center justify-center gap-2">
+              <QrCode className="h-5 w-5" />
+              QRコードでシェア
+            </h3>
+            <div className="grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
+              {/* 楽曲ページQRコード */}
+              <div className="flex justify-center">
+                <QRCodeDisplay
+                  value={`https://kaleidoaimusic.kaleidofuture.com/music/${music.id}`}
+                  size={180}
+                  label="この楽曲ページ"
+                />
+              </div>
+
+              {/* 共有リンクQRコード */}
+              {music.shareLink && (
+                <div className="flex justify-center">
+                  <QRCodeDisplay
+                    value={music.shareLink}
+                    size={180}
+                    label="生成元のサービス"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
