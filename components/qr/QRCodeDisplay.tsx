@@ -1,6 +1,6 @@
 'use client';
 
-import { QRCodeSVG } from 'react-qr-code';
+import QRCode from 'react-qr-code';
 
 interface QRCodeDisplayProps {
   value: string;
@@ -24,7 +24,7 @@ export function QRCodeDisplay({
           maxWidth: '100%'
         }}
       >
-        <QRCodeSVG
+        <QRCode
           value={value}
           size={size}
           level="M"
