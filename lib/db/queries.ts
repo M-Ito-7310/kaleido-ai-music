@@ -121,11 +121,11 @@ export async function getMusicCount(filter: Omit<MusicFilter, 'limit' | 'offset'
   }
 
   const result = await db
-    .select({ count: sql<number>`count(*)` })
+    .select({ count: sql`count(*)::integer` })
     .from(music)
     .where(and(...conditions));
 
-  return result[0]?.count || 0;
+  return Number(result[0]?.count) || 0;
 }
 
 /**
@@ -235,13 +235,19 @@ export async function getTags(limit?: number) {
 export async function getMusicStats(): Promise<MusicStats> {
   const result = await db
     .select({
-      totalMusic: sql<number>`count(*)`,
-      totalPlays: sql<number>`coalesce(sum(${music.playCount}), 0)`,
-      totalDownloads: sql<number>`coalesce(sum(${music.downloadCount}), 0)`,
-      averageDuration: sql<number>`coalesce(avg(${music.duration}), 0)`,
+      totalMusic: sql`count(*)::integer`,
+      totalPlays: sql`coalesce(sum(${music.playCount}), 0)::integer`,
+      totalDownloads: sql`coalesce(sum(${music.downloadCount}), 0)::integer`,
+      averageDuration: sql`coalesce(avg(${music.duration}), 0)::numeric`,
     })
     .from(music)
     .where(eq(music.isPublished, 1));
 
-  return result[0] as MusicStats;
+  const stats = result[0];
+  return {
+    totalMusic: Number(stats.totalMusic) || 0,
+    totalPlays: Number(stats.totalPlays) || 0,
+    totalDownloads: Number(stats.totalDownloads) || 0,
+    averageDuration: Number(stats.averageDuration) || 0,
+  };
 }
