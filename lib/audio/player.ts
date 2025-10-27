@@ -78,6 +78,9 @@ export class AudioPlayer {
     try {
       console.log('[AudioPlayer] Loading track:', url);
 
+      // Stop current playback
+      this.stop();
+
       // Set the audio source
       this.audioElement.src = url;
 
@@ -88,26 +91,28 @@ export class AudioPlayer {
           return;
         }
 
-        const onLoadedMetadata = () => {
-          console.log('[AudioPlayer] Metadata loaded, duration:', this.audioElement?.duration);
-          this.audioElement?.removeEventListener('loadedmetadata', onLoadedMetadata);
+        const onCanPlay = () => {
+          console.log('[AudioPlayer] Can play - ready to start playback');
+          this.audioElement?.removeEventListener('canplay', onCanPlay);
           this.audioElement?.removeEventListener('error', onError);
           resolve();
         };
 
         const onError = (e: ErrorEvent | Event) => {
           console.error('[AudioPlayer] Error loading audio:', e);
-          this.audioElement?.removeEventListener('loadedmetadata', onLoadedMetadata);
+          this.audioElement?.removeEventListener('canplay', onCanPlay);
           this.audioElement?.removeEventListener('error', onError);
           reject(new Error('Failed to load audio'));
         };
 
-        this.audioElement.addEventListener('loadedmetadata', onLoadedMetadata);
-        this.audioElement.addEventListener('error', onError);
+        this.audioElement.addEventListener('canplay', onCanPlay, { once: true });
+        this.audioElement.addEventListener('error', onError, { once: true });
 
         // Load the audio
         this.audioElement.load();
       });
+
+      console.log('[AudioPlayer] Track loaded successfully, duration:', this.getDuration());
     } catch (error) {
       console.error('[AudioPlayer] Failed to load audio:', error);
       throw error;
