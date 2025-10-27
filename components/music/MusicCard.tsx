@@ -71,7 +71,20 @@ export function MusicCard({ music, index = 0, playlist }: MusicCardProps) {
           <h3 className="text-base font-semibold text-gray-900 dark:text-white line-clamp-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {music.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{music.artist}</p>
+
+          {/* タグ表示 */}
+          {music.tags && music.tags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {music.tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 text-xs font-medium text-primary-700 dark:text-primary-300"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* メタデータ */}
           <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
