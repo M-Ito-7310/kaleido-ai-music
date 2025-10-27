@@ -93,7 +93,7 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                       タグ:
                     </span>
                     <div className="flex flex-wrap gap-2">
-                      {music.tags.map((tag) => (
+                      {music.tags.map((tag: string) => (
                         <span
                           key={tag}
                           className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300"
