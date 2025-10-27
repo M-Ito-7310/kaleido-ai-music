@@ -7,8 +7,6 @@ import { AudioPlayer } from '@/lib/audio/player';
 import { formatDuration } from '@/lib/utils';
 import { useDynamicColors } from '@/lib/hooks/useDynamicColors';
 import { createGradientFromPalette, getContrastColor } from '@/lib/colors/extractColors';
-import { AudioVisualizer } from './AudioVisualizer';
-import WaveSurfer from 'wavesurfer.js';
 
 interface MusicPlayerProps {
   audioUrl: string;
@@ -26,7 +24,6 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
   const [isLoading, setIsLoading] = useState(true);
 
   const playerRef = useRef<AudioPlayer | null>(null);
-  const wavesurferRef = useRef<WaveSurfer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // ダイナミックカラー抽出
@@ -55,12 +52,6 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
       intervalRef.current = setInterval(() => {
         const time = playerRef.current?.getCurrentTime() || 0;
         setCurrentTime(time);
-
-        // WaveSurferと同期
-        if (wavesurferRef.current && duration > 0) {
-          const progress = time / duration;
-          wavesurferRef.current.seekTo(progress);
-        }
 
         if (time >= duration) {
           setIsPlaying(false);
@@ -92,7 +83,8 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
     setIsPlaying(!isPlaying);
   };
 
-  const handleSeek = (time: number) => {
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
     setCurrentTime(time);
     playerRef.current?.seek(time);
   };
@@ -113,10 +105,6 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
       playerRef.current?.setVolume(0);
     }
     setIsMuted(!isMuted);
-  };
-
-  const handleWaveSurferReady = (ws: WaveSurfer) => {
-    wavesurferRef.current = ws;
   };
 
   // カラーパレットから背景スタイルとテキストカラーを生成
@@ -154,17 +142,21 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl }: MusicPlayerPr
         <p className={`text-sm ${secondaryTextClass}`}>{artist}</p>
       </div>
 
-      {/* 音声ビジュアライザー */}
+      {/* シークバー */}
       <div className="mb-4">
-        <AudioVisualizer
-          audioUrl={audioUrl}
-          waveColor={colors?.muted || '#94A3B8'}
-          progressColor={colors?.vibrant || '#0284c7'}
-          height={80}
-          barWidth={2}
-          barGap={1}
-          onReady={handleWaveSurferReady}
-          onSeek={handleSeek}
+        <input
+          type="range"
+          min="0"
+          max={duration}
+          step="0.1"
+          value={currentTime}
+          onChange={handleSeek}
+          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+          style={{ accentColor: colors?.vibrant || '#0284c7' }}
+          aria-label="再生位置"
+          aria-valuemin={0}
+          aria-valuemax={duration}
+          aria-valuenow={currentTime}
         />
         <div className={`flex justify-between text-xs ${secondaryTextClass} mt-1`}>
           <span>{formatDuration(currentTime)}</span>
