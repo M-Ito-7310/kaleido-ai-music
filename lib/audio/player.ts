@@ -14,6 +14,7 @@ export class AudioPlayer {
   private audioSettings: AudioSettings = DEFAULT_AUDIO_SETTINGS;
   private onTimeUpdateCallback: ((time: number) => void) | null = null;
   private onEndedCallback: (() => void) | null = null;
+  private rafId: number | null = null; // requestAnimationFrame ID for time tracking
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -26,7 +27,6 @@ export class AudioPlayer {
 
       // Add event listeners
       console.log('[AudioPlayer] Adding event listeners');
-      this.audioElement.addEventListener('timeupdate', this.handleTimeUpdate);
       this.audioElement.addEventListener('ended', this.handleEnded);
       this.audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata);
       this.audioElement.addEventListener('playing', () => {
@@ -57,19 +57,51 @@ export class AudioPlayer {
     }
   }
 
-  private handleTimeUpdate = () => {
-    console.log('[AudioPlayer] handleTimeUpdate called, callback exists:', !!this.onTimeUpdateCallback);
-    if (this.onTimeUpdateCallback && this.audioElement) {
-      const currentTime = this.audioElement.currentTime;
-      console.log('[AudioPlayer] Time update:', currentTime, '/', this.audioElement.duration);
-      this.onTimeUpdateCallback(currentTime);
-    } else {
-      console.warn('[AudioPlayer] Time update fired but callback is null or audioElement is null');
+  /**
+   * Start tracking playback time using requestAnimationFrame
+   * This provides smooth, reliable updates at ~60fps
+   */
+  private startTimeTracking() {
+    // Stop any existing tracking
+    this.stopTimeTracking();
+
+    const update = () => {
+      if (this.audioElement && !this.audioElement.paused && !this.audioElement.ended) {
+        const currentTime = this.audioElement.currentTime;
+        const duration = this.audioElement.duration;
+
+        console.log('[AudioPlayer] RAF update:', currentTime, '/', duration);
+
+        if (this.onTimeUpdateCallback && !isNaN(currentTime) && !isNaN(duration)) {
+          this.onTimeUpdateCallback(currentTime);
+        }
+
+        // Continue tracking
+        this.rafId = requestAnimationFrame(update);
+      } else {
+        // Playback stopped, clear RAF
+        this.rafId = null;
+      }
+    };
+
+    console.log('[AudioPlayer] Starting time tracking with RAF');
+    this.rafId = requestAnimationFrame(update);
+  }
+
+  /**
+   * Stop tracking playback time
+   */
+  private stopTimeTracking() {
+    if (this.rafId !== null) {
+      console.log('[AudioPlayer] Stopping time tracking');
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
     }
-  };
+  }
 
   private handleEnded = () => {
     console.log('[AudioPlayer] Track ended');
+    this.stopTimeTracking();
     if (this.onEndedCallback) {
       this.onEndedCallback();
     }
@@ -157,6 +189,9 @@ export class AudioPlayer {
         console.log('[AudioPlayer] Play started successfully');
         console.log('[AudioPlayer] After play - paused:', this.audioElement?.paused, 'ended:', this.audioElement?.ended);
         console.log('[AudioPlayer] Current time:', this.audioElement?.currentTime, 'Duration:', this.audioElement?.duration);
+
+        // Start time tracking with requestAnimationFrame
+        this.startTimeTracking();
       })
       .catch((error) => {
         console.error('[AudioPlayer] Failed to play audio:', error);
@@ -167,6 +202,9 @@ export class AudioPlayer {
     if (!this.audioElement) return;
     console.log('[AudioPlayer] Pause called');
     this.audioElement.pause();
+
+    // Stop time tracking
+    this.stopTimeTracking();
   }
 
   stop(): void {
@@ -174,6 +212,9 @@ export class AudioPlayer {
     console.log('[AudioPlayer] Stop called');
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
+
+    // Stop time tracking
+    this.stopTimeTracking();
   }
 
   setVolume(volume: number): void {
@@ -227,9 +268,11 @@ export class AudioPlayer {
   destroy(): void {
     this.stop();
 
+    // Stop time tracking
+    this.stopTimeTracking();
+
     // Remove event listeners
     if (this.audioElement) {
-      this.audioElement.removeEventListener('timeupdate', this.handleTimeUpdate);
       this.audioElement.removeEventListener('ended', this.handleEnded);
       this.audioElement.removeEventListener('loadedmetadata', this.handleLoadedMetadata);
     }
