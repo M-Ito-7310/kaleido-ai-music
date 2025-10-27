@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
-import { getMusicList, getCategories, getTags } from '@/lib/db/queries';
+import { getMusicList, getMusicCount, getCategories, getTags } from '@/lib/db/queries';
 import { MusicGrid } from '@/components/music/MusicGrid';
 import { CategoryFilter } from '@/components/filters/CategoryFilter';
 import { TagFilter } from '@/components/filters/TagFilter';
@@ -50,12 +50,13 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const tags = tagsParam ? tagsParam.split(',') : undefined;
   const search = searchParams.search;
   const sortBy = searchParams.sortBy || 'latest';
-  const limit = parseInt(searchParams.limit || '20', 10);
+  const limit = parseInt(searchParams.limit || '10', 10);
   const offset = parseInt(searchParams.offset || '0', 10);
 
   // データ取得
-  const [musicList, categoriesList, tagsList] = await Promise.all([
+  const [musicList, totalCount, categoriesList, tagsList] = await Promise.all([
     getMusicList({ category, tags, search, sortBy, limit, offset }),
+    getMusicCount({ category, tags, search }),
     getCategories(),
     getTags(10),
   ]);
@@ -102,7 +103,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         {/* ページネーション */}
         {musicList.length > 0 && (
           <div className="mt-12">
-            <Pagination total={1000} limit={limit} currentOffset={offset} />
+            <Pagination total={totalCount} limit={limit} currentOffset={offset} />
           </div>
         )}
 

@@ -26,7 +26,7 @@ export async function getMusicList(filter: MusicFilter = {}) {
     tags: tagsList,
     search,
     sortBy = 'latest',
-    limit = 20,
+    limit = 10,
     offset = 0,
   } = filter;
 
@@ -81,6 +81,51 @@ export async function getMusicList(filter: MusicFilter = {}) {
     .offset(offset);
 
   return result;
+}
+
+/**
+ * 音楽の総数を取得（フィルター条件に応じた件数）
+ */
+export async function getMusicCount(filter: Omit<MusicFilter, 'limit' | 'offset' | 'sortBy'> = {}) {
+  const {
+    category,
+    tags: tagsList,
+    search,
+  } = filter;
+
+  // WHERE条件を構築
+  const conditions = [eq(music.isPublished, 1)];
+
+  // カテゴリフィルター
+  if (category) {
+    conditions.push(eq(music.category, category));
+  }
+
+  // タグフィルター（配列内のいずれかのタグを含む）
+  if (tagsList && tagsList.length > 0) {
+    // JSONフィールド内の配列に対する検索
+    const tagConditions = tagsList.map((tag) =>
+      sql`${music.tags}::jsonb @> ${JSON.stringify([tag])}::jsonb`
+    );
+    conditions.push(or(...tagConditions)!);
+  }
+
+  // 検索フィルター（タイトルまたはアーティスト名）
+  if (search) {
+    conditions.push(
+      or(
+        like(music.title, `%${search}%`),
+        like(music.artist, `%${search}%`)
+      )!
+    );
+  }
+
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(music)
+    .where(and(...conditions));
+
+  return result[0]?.count || 0;
 }
 
 /**
