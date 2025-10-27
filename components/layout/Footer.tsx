@@ -50,9 +50,17 @@ export function Footer() {
             </div>
 
             {/* 著作権表示 */}
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              &copy; {new Date().getFullYear()} Kaleido Future
-            </p>
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                &copy; {new Date().getFullYear()} Kaleido Future
+              </p>
+              <Link
+                href="/admin/login"
+                className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                Admin
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -130,9 +138,18 @@ export function Footer() {
           </div>
 
           <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-              &copy; {new Date().getFullYear()} Kaleido Future. All rights reserved.
-            </p>
+            <div className="flex justify-center items-baseline gap-4">
+              <span className="text-center text-sm text-gray-500 dark:text-gray-400">
+                &copy; {new Date().getFullYear()} Kaleido Future. All rights reserved.
+              </span>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <Link
+                href="/admin/login"
+                className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                Admin
+              </Link>
+            </div>
           </div>
         </div>
       </div>
