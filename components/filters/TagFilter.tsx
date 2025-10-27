@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { X } from 'lucide-react';
 import type { Tag } from '@/lib/db/schema';
 import { cn } from '@/lib/utils';
 
@@ -39,47 +38,9 @@ export function TagFilter({ tags, selectedTags }: TagFilterProps) {
     router.push(`/library?${params.toString()}`);
   };
 
-  const handleClearTags = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('tags');
-    params.delete('offset');
-    router.push(`/library?${params.toString()}`);
-  };
-
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900">タグ</h3>
-        {selectedTags.length > 0 && (
-          <button
-            onClick={handleClearTags}
-            className="text-xs text-primary-600 hover:text-primary-700"
-          >
-            クリア
-          </button>
-        )}
-      </div>
-
-      {/* 選択中のタグ */}
-      {selectedTags.length > 0 && (
-        <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
-          {selectedTags.map((tagSlug) => {
-            const tag = tags.find((t) => t.slug === tagSlug);
-            if (!tag) return null;
-
-            return (
-              <button
-                key={tag.slug}
-                onClick={() => handleTagToggle(tag.slug)}
-                className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800 hover:bg-primary-200 transition-colors"
-              >
-                #{tag.name}
-                <X className="h-3 w-3" />
-              </button>
-            );
-          })}
-        </div>
-      )}
+      <h3 className="text-sm font-semibold text-gray-900">タグ</h3>
 
       {/* すべてのタグ */}
       <div className="flex flex-wrap gap-2">
