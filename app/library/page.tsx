@@ -67,15 +67,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         {/* ヘッダー */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-display">音楽ライブラリ</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            AI生成音楽を視聴・ダウンロードできます
-            {totalCount > 0 && (
-              <span className="ml-2 text-sm">
-                （{category || tags || search ? 'フィルター適用中: ' : '全'}
-                {totalCount}件）
-              </span>
-            )}
-          </p>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">AI生成音楽を視聴・ダウンロードできます</p>
         </div>
 
         {/* 検索バーとソート */}
@@ -96,6 +88,25 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
           <CategoryFilter categories={categoriesList} currentCategory={category} />
           <TagFilter tags={tagsList} selectedTags={tags || []} />
         </div>
+
+        {/* 件数表示 */}
+        {totalCount > 0 && (
+          <div className="mb-6">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {category || tags || search ? (
+                <>
+                  <span className="font-medium text-gray-900 dark:text-white">{totalCount}件</span>
+                  の音楽が見つかりました
+                </>
+              ) : (
+                <>
+                  全<span className="font-medium text-gray-900 dark:text-white">{totalCount}件</span>
+                  の音楽
+                </>
+              )}
+            </p>
+          </div>
+        )}
 
         {/* 音楽グリッド */}
         <Suspense
