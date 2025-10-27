@@ -150,10 +150,14 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
 
           {/* QRコードセクション */}
           <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 text-center flex items-center justify-center gap-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 text-center flex items-center justify-center gap-2">
               <QrCode className="h-5 w-5" />
               QRコードでシェア
             </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6 max-w-2xl mx-auto">
+              カメラやブラウザでQRコードをスキャンしてアクセスできます。
+              アプリ内で開いた場合は、リンクをタップして外部ブラウザで開いてください。
+            </p>
             <div className="grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
               {/* 楽曲ページQRコード */}
               <div className="flex justify-center">
@@ -169,7 +173,7 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                 <div className="flex justify-center">
                   <QRCodeDisplay
                     value={music.shareLink.trim()}
-                    size={200}
+                    size={180}
                     label="生成元のサービス"
                   />
                 </div>
