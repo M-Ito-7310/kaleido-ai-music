@@ -141,6 +141,7 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                   title={music.title}
                   artist={music.artist}
                   imageUrl={music.imageUrl}
+                  musicData={music}
                 />
               </div>
 
