@@ -1,11 +1,11 @@
 import { cookies } from 'next/headers';
 import { randomUUID } from 'crypto';
+import { db } from '@/lib/db';
+import { sessions as sessionsTable } from '@/lib/db/schema';
+import { eq, lt } from 'drizzle-orm';
 
 const SESSION_COOKIE_NAME = 'admin_session';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7日間
-
-// メモリベースのセッションストア（開発用）
-const sessionStore = new Map<string, { userId: string; expiresAt: Date }>();
 
 /**
  * 新しいセッションを作成
@@ -16,10 +16,14 @@ export async function createSession(userId: string): Promise<string> {
 
   console.log('[Session] Creating new session for userId:', userId);
 
-  // メモリにセッションを保存
-  sessionStore.set(sessionId, { userId, expiresAt });
+  // データベースにセッションを保存
+  await db.insert(sessionsTable).values({
+    id: sessionId,
+    userId,
+    expiresAt,
+  });
 
-  console.log('[Session] Session created in memory:', sessionId);
+  console.log('[Session] Session created in database:', sessionId);
 
   // Cookieに保存
   const cookieStore = await cookies();
@@ -48,18 +52,24 @@ export async function validateSession(): Promise<boolean> {
     return false;
   }
 
-  // メモリからセッションを取得
-  const session = sessionStore.get(sessionId);
+  // データベースからセッションを取得
+  const sessions = await db
+    .select()
+    .from(sessionsTable)
+    .where(eq(sessionsTable.id, sessionId))
+    .limit(1);
+
+  const session = sessions[0];
 
   if (!session) {
-    console.log('[Session] Session not found in memory');
+    console.log('[Session] Session not found in database');
     return false;
   }
 
   // セッションの有効期限をチェック
   if (new Date() > session.expiresAt) {
     console.log('[Session] Session expired');
-    sessionStore.delete(sessionId);
+    await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
     return false;
   }
 
@@ -78,12 +88,18 @@ export async function getSession(): Promise<{ userId: string } | null> {
     return null;
   }
 
-  // メモリからセッションを取得
-  const session = sessionStore.get(sessionId);
+  // データベースからセッションを取得
+  const sessions = await db
+    .select()
+    .from(sessionsTable)
+    .where(eq(sessionsTable.id, sessionId))
+    .limit(1);
+
+  const session = sessions[0];
 
   if (!session || new Date() > session.expiresAt) {
     if (session) {
-      sessionStore.delete(sessionId);
+      await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
     }
     return null;
   }
@@ -99,7 +115,7 @@ export async function deleteSession(): Promise<void> {
   const sessionId = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
   if (sessionId) {
-    sessionStore.delete(sessionId);
+    await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
   }
 
   cookieStore.delete(SESSION_COOKIE_NAME);
@@ -110,18 +126,12 @@ export async function deleteSession(): Promise<void> {
  * （定期的に実行することを推奨）
  */
 export async function cleanupExpiredSessions(): Promise<number> {
-  const now = new Date();
-  let count = 0;
+  const result = await db
+    .delete(sessionsTable)
+    .where(lt(sessionsTable.expiresAt, new Date()));
 
-  for (const [sessionId, session] of sessionStore.entries()) {
-    if (now > session.expiresAt) {
-      sessionStore.delete(sessionId);
-      count++;
-    }
-  }
-
-  console.log('[Session] Cleaned up expired sessions:', count);
-  return count;
+  console.log('[Session] Cleaned up expired sessions');
+  return 0; // Drizzle ORMはdeleteの影響行数を直接返さないため
 }
 
 /**
