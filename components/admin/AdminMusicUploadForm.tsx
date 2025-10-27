@@ -63,7 +63,7 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
       // 2. 音楽メタデータを作成
       const duration = await getAudioDuration(audioFile);
 
-      const musicData = {
+      const musicData: any = {
         title: formData.title,
         artist: 'Unknown Artist',
         description: formData.description,
@@ -73,10 +73,12 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
         fileSize: audioFile.size,
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
-        mood: formData.mood || null,
-        aiPlatform: formData.aiPlatform || null,
-        shareLink: formData.shareLink || null,
       };
+
+      // オプションフィールドは値がある場合のみ追加
+      if (formData.mood) musicData.mood = formData.mood;
+      if (formData.aiPlatform) musicData.aiPlatform = formData.aiPlatform;
+      if (formData.shareLink) musicData.shareLink = formData.shareLink;
 
       // 3. データベースに保存（管理者専用API使用）
       const createRes = await fetch('/api/admin/music', {

@@ -72,16 +72,18 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
       }
 
       // 音楽情報を更新
-      const updateData = {
+      const updateData: any = {
         title: formData.title,
         description: formData.description,
         imageUrl,
         category: formData.category,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
-        mood: formData.mood || null,
-        aiPlatform: formData.aiPlatform || null,
-        shareLink: formData.shareLink || null,
       };
+
+      // オプションフィールドは値がある場合のみ追加
+      if (formData.mood) updateData.mood = formData.mood;
+      if (formData.aiPlatform) updateData.aiPlatform = formData.aiPlatform;
+      if (formData.shareLink) updateData.shareLink = formData.shareLink;
 
       const updateRes = await fetch(`/api/admin/music/${music.id}`, {
         method: 'PATCH',
