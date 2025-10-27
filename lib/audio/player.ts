@@ -18,31 +18,20 @@ export class AudioPlayer {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      console.log('[AudioPlayer] Constructor called');
-
       // Create HTML Audio Element
       this.audioElement = new Audio();
       this.audioElement.crossOrigin = 'anonymous'; // Enable CORS for Web Audio API
       this.audioElement.preload = 'auto';
 
       // Add event listeners
-      console.log('[AudioPlayer] Adding event listeners');
       this.audioElement.addEventListener('ended', this.handleEnded);
       this.audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata);
-      this.audioElement.addEventListener('playing', () => {
-        console.log('[AudioPlayer] playing event fired');
-      });
-      this.audioElement.addEventListener('pause', () => {
-        console.log('[AudioPlayer] pause event fired');
-      });
 
       // Create Web Audio API context
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      console.log('[AudioPlayer] AudioContext created, state:', this.audioContext.state);
 
       // Create source node from audio element
       this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
-      console.log('[AudioPlayer] MediaElementSourceNode created');
 
       // Create gain node for volume control
       this.gainNode = this.audioContext.createGain();
@@ -51,10 +40,10 @@ export class AudioPlayer {
       this.audioProcessor = new AudioProcessor(this.audioContext);
 
       // Connect: sourceNode → gainNode → destination
-      // Bypassing AudioProcessor temporarily to isolate the issue
+      // Note: AudioProcessor is kept for future effects implementation
+      // Currently connecting directly to destination for stable playback
       this.sourceNode.connect(this.gainNode);
       this.gainNode.connect(this.audioContext.destination);
-      console.log('[AudioPlayer] Audio nodes connected (direct to destination)');
     }
   }
 
@@ -71,8 +60,6 @@ export class AudioPlayer {
         const currentTime = this.audioElement.currentTime;
         const duration = this.audioElement.duration;
 
-        console.log('[AudioPlayer] RAF update:', currentTime, '/', duration);
-
         if (this.onTimeUpdateCallback && !isNaN(currentTime) && !isNaN(duration)) {
           this.onTimeUpdateCallback(currentTime);
         }
@@ -85,7 +72,6 @@ export class AudioPlayer {
       }
     };
 
-    console.log('[AudioPlayer] Starting time tracking with RAF');
     this.rafId = requestAnimationFrame(update);
   }
 
@@ -94,14 +80,12 @@ export class AudioPlayer {
    */
   private stopTimeTracking() {
     if (this.rafId !== null) {
-      console.log('[AudioPlayer] Stopping time tracking');
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
   }
 
   private handleEnded = () => {
-    console.log('[AudioPlayer] Track ended');
     this.stopTimeTracking();
     if (this.onEndedCallback) {
       this.onEndedCallback();
@@ -109,16 +93,14 @@ export class AudioPlayer {
   };
 
   private handleLoadedMetadata = () => {
-    console.log('[AudioPlayer] Loaded metadata (event), duration:', this.audioElement?.duration);
+    // Metadata loaded - duration is now available
   };
 
   onTimeUpdate(callback: (time: number) => void) {
-    console.log('[AudioPlayer] onTimeUpdate callback registered');
     this.onTimeUpdateCallback = callback;
   }
 
   onEnded(callback: () => void) {
-    console.log('[AudioPlayer] onEnded callback registered');
     this.onEndedCallback = callback;
   }
 
@@ -126,15 +108,13 @@ export class AudioPlayer {
     if (!this.audioElement) return;
 
     try {
-      console.log('[AudioPlayer] Loading track:', url);
-
       // Stop current playback
       this.stop();
 
       // Set the audio source
       this.audioElement.src = url;
 
-      // Wait for metadata to be loaded to get duration
+      // Wait for track to be ready for playback
       await new Promise<void>((resolve, reject) => {
         if (!this.audioElement) {
           reject(new Error('Audio element not initialized'));
@@ -142,14 +122,12 @@ export class AudioPlayer {
         }
 
         const onCanPlay = () => {
-          console.log('[AudioPlayer] Can play - ready to start playback');
           this.audioElement?.removeEventListener('canplay', onCanPlay);
           this.audioElement?.removeEventListener('error', onError);
           resolve();
         };
 
         const onError = (e: ErrorEvent | Event) => {
-          console.error('[AudioPlayer] Error loading audio:', e);
           this.audioElement?.removeEventListener('canplay', onCanPlay);
           this.audioElement?.removeEventListener('error', onError);
           reject(new Error('Failed to load audio'));
@@ -161,10 +139,7 @@ export class AudioPlayer {
         // Load the audio
         this.audioElement.load();
       });
-
-      console.log('[AudioPlayer] Track loaded successfully, duration:', this.getDuration());
     } catch (error) {
-      console.error('[AudioPlayer] Failed to load audio:', error);
       throw error;
     }
   }
@@ -172,34 +147,25 @@ export class AudioPlayer {
   async play(): Promise<void> {
     if (!this.audioElement || !this.audioContext) return;
 
-    console.log('[AudioPlayer] Play called, audio context state:', this.audioContext.state);
-    console.log('[AudioPlayer] Audio element paused:', this.audioElement.paused, 'ended:', this.audioElement.ended);
-    console.log('[AudioPlayer] Audio element src:', this.audioElement.src);
-
     // Resume audio context if suspended and WAIT for it to be running
     if (this.audioContext.state === 'suspended') {
-      console.log('[AudioPlayer] Resuming audio context...');
       await this.audioContext.resume();
-      console.log('[AudioPlayer] Audio context resumed, state:', this.audioContext.state);
     }
 
     // Play the audio (AudioContext is now guaranteed to be running)
     try {
       await this.audioElement.play();
-      console.log('[AudioPlayer] Play started successfully');
-      console.log('[AudioPlayer] After play - paused:', this.audioElement.paused, 'ended:', this.audioElement.ended);
-      console.log('[AudioPlayer] Current time:', this.audioElement.currentTime, 'Duration:', this.audioElement.duration);
 
       // Start time tracking with requestAnimationFrame
       this.startTimeTracking();
     } catch (error) {
-      console.error('[AudioPlayer] Failed to play audio:', error);
+      // Playback failed - user may need to interact with page first
+      throw error;
     }
   }
 
   pause(): void {
     if (!this.audioElement) return;
-    console.log('[AudioPlayer] Pause called');
     this.audioElement.pause();
 
     // Stop time tracking
@@ -208,7 +174,6 @@ export class AudioPlayer {
 
   stop(): void {
     if (!this.audioElement) return;
-    console.log('[AudioPlayer] Stop called');
     this.audioElement.pause();
     this.audioElement.currentTime = 0;
 

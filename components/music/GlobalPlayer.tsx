@@ -39,19 +39,16 @@ export function GlobalPlayer() {
 
   // AudioPlayerの初期化とクリーンアップ
   useEffect(() => {
-    console.log('[GlobalPlayer] Initializing AudioPlayer');
     audioPlayerRef.current = new AudioPlayer();
 
     // Setup timeupdate event listener
     audioPlayerRef.current.onTimeUpdate((time) => {
-      console.log('[GlobalPlayer] Time update callback:', time);
       setCurrentTime(time);
       const duration = audioPlayerRef.current?.getDuration() || 0;
       updatePositionState(duration, time);
     });
 
     return () => {
-      console.log('[GlobalPlayer] Cleaning up AudioPlayer');
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
@@ -88,16 +85,12 @@ export function GlobalPlayer() {
   useEffect(() => {
     if (!currentTrack || !audioPlayerRef.current) return;
 
-    console.log('[GlobalPlayer] Loading track:', currentTrack.title, currentTrack.audioUrl);
-
     audioPlayerRef.current.loadTrack(currentTrack.audioUrl).then(() => {
       const trackDuration = audioPlayerRef.current?.getDuration() || 0;
-      console.log('[GlobalPlayer] Track loaded, duration:', trackDuration);
       setDuration(trackDuration);
       setCurrentTime(0);
 
       if (isPlaying) {
-        console.log('[GlobalPlayer] Auto-playing track');
         audioPlayerRef.current?.play();
       }
 
