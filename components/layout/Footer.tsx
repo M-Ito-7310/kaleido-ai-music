@@ -20,6 +20,10 @@ export function Footer() {
 
             {/* 法的情報リンク */}
             <div className="flex gap-4 text-xs text-gray-600 dark:text-gray-400">
+              <Link href="/contact" className="hover:text-gray-900 dark:hover:text-gray-200">
+                お問い合わせ
+              </Link>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
               <Link href="/terms" className="hover:text-gray-900 dark:hover:text-gray-200">
                 利用規約
               </Link>
@@ -118,6 +122,11 @@ export function Footer() {
                 <li>
                   <Link href="/about" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
                     このサイトについて
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
+                    お問い合わせ
                   </Link>
                 </li>
               </ul>
