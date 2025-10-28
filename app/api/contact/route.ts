@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       message:
         'お問い合わせを送信しました。ご連絡いただきありがとうございます。',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Contact form error:', error)
 
     // Zodバリデーションエラー
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: error.errors[0].message,
+          message: error.issues[0].message,
         },
         { status: 400 }
       )
