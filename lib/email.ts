@@ -16,12 +16,19 @@ export async function sendContactNotification(
   // SMTP設定
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false, // false for STARTTLS (port 587)
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
+    tls: {
+      // Xserverの自己署名証明書を許可
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000, // 10秒
+    greetingTimeout: 10000, // 10秒
+    socketTimeout: 10000, // 10秒
   })
 
   // 管理者へのメール内容
