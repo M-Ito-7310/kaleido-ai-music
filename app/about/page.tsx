@@ -106,18 +106,13 @@ export default function AboutPage() {
             <p>
               <strong>運営:</strong> Kaleido Future（屋号）
             </p>
-            <div className="mt-4">
-              <p className="mb-3">
-                <strong>お問い合わせ:</strong>
-              </p>
-              <div className="text-center">
-                <Link
-                  href="/contact"
-                  className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  お問い合わせフォームへ
-                </Link>
-              </div>
+            <div className="mt-4 text-center">
+              <Link
+                href="/contact"
+                className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                お問い合わせフォームへ
+              </Link>
             </div>
           </div>
         </div>
