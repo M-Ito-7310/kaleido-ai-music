@@ -108,12 +108,12 @@ export default function AboutPage() {
             </p>
             <p>
               <strong>お問い合わせ:</strong>{' '}
-              <a
-                href="mailto:kaleidoaimusic_support@kaleidofuture.com"
+              <Link
+                href="/contact"
                 className="text-purple-600 hover:text-purple-700 hover:underline"
               >
-                kaleidoaimusic_support@kaleidofuture.com
-              </a>
+                お問い合わせフォーム
+              </Link>
             </p>
           </div>
         </div>
