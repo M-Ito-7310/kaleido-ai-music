@@ -146,7 +146,7 @@ C:\Users\mitoi\Desktop\Projects\nocode-ui-builder の問い合わせフォーム
 完了日時: 2025-10-28 18:00
 実績時間: 約3.5時間
 見積時間: 約1.5〜2時間
-Git commit: 未記録（次ステップで追加）
+Git commit: dbf90ad43cafeefd6e2679c64ac36456034bb8e5
 
 #### 最終確認
 - [x] すべての機能が実装されている
