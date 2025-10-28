@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
@@ -26,6 +27,40 @@ export function FullScreenPlayer() {
   const { currentTrack, isFullScreen, setIsFullScreen } = usePlayer();
   const { colors } = useDynamicColors(currentTrack?.imageUrl);
 
+  // フルスクリーン表示時に背景スクロールを無効化
+  useEffect(() => {
+    if (isFullScreen) {
+      // スクロール無効化（iOS Safari対応含む）
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // スクロール復元
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+
+    // クリーンアップ: コンポーネントがアンマウントされた時も復元
+    return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    };
+  }, [isFullScreen]);
+
   const handleClose = () => {
     setIsFullScreen(false);
   };
@@ -49,7 +84,7 @@ export function FullScreenPlayer() {
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           className="fixed inset-0 z-[100] flex flex-col overflow-hidden"
           style={{
-            background: `linear-gradient(to bottom, ${primaryColor}20, ${secondaryColor}40, #0f172a)`,
+            background: `linear-gradient(to bottom, ${primaryColor}dd, ${secondaryColor}ee, #0f172a)`,
           }}
           {...swipeHandlers}
         >
