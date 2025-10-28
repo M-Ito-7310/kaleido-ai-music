@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Music, Github, Twitter } from 'lucide-react';
+import { Music, Github, Music2 } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -36,16 +36,18 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                aria-label="GitHub"
               >
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://suno.com/@masato_kaleidofuture"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                aria-label="Suno AI Profile"
               >
-                <Twitter className="h-5 w-5" />
+                <Music2 className="h-5 w-5" />
               </a>
             </div>
 
@@ -88,16 +90,18 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="GitHub"
                 >
                   <Github className="h-6 w-6" />
                 </a>
                 <a
-                  href="https://twitter.com"
+                  href="https://suno.com/@masato_kaleidofuture"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="Suno AI Profile"
                 >
-                  <Twitter className="h-6 w-6" />
+                  <Music2 className="h-6 w-6" />
                 </a>
               </div>
             </div>
