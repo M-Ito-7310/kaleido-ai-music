@@ -6,6 +6,13 @@ import { MusicCard } from '@/components/music/MusicCard';
 import { getMusicList } from '@/lib/db/queries';
 
 export default async function HomePage() {
+  // 新着3曲を取得
+  const latestMusic = await getMusicList({
+    sortBy: 'latest',
+    limit: 3,
+    offset: 0,
+  });
+
   // 再生数上位3曲を取得
   const popularMusic = await getMusicList({
     sortBy: 'popular',
@@ -92,6 +99,33 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 新着音楽セクション */}
+      <section className="py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl font-display">
+              新着の音楽
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+              最近追加された最新のAI音楽をチェック
+            </p>
+          </div>
+
+          {/* 新着3曲のカード表示 */}
+          {latestMusic.length > 0 ? (
+            <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+              {latestMusic.map((music, index) => (
+                <MusicCard key={music.id} music={music} index={index} playlist={latestMusic} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-16 text-center">
+              <p className="text-gray-500 dark:text-gray-400">まだ音楽がありません</p>
+            </div>
+          )}
         </div>
       </section>
 
