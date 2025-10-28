@@ -3,12 +3,11 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowUpDown } from 'lucide-react';
 
-type SortOption = 'latest' | 'popular' | 'downloads';
+type SortOption = 'latest' | 'popular';
 
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'latest', label: '新着順' },
   { value: 'popular', label: '人気順（再生数）' },
-  { value: 'downloads', label: 'ダウンロード数順' },
 ];
 
 export function SortSelector() {

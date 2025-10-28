@@ -21,7 +21,7 @@ interface LibraryPageProps {
     category?: string;
     tags?: string;
     search?: string;
-    sortBy?: 'latest' | 'popular' | 'downloads';
+    sortBy?: 'latest' | 'popular';
     offset?: string;
     limit?: string;
   };

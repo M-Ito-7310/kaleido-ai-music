@@ -63,9 +63,6 @@ export async function getMusicList(filter: MusicFilter = {}) {
     case 'popular':
       orderBy = [desc(music.playCount), desc(music.createdAt)];
       break;
-    case 'downloads':
-      orderBy = [desc(music.downloadCount), desc(music.createdAt)];
-      break;
     case 'latest':
     default:
       orderBy = [desc(music.createdAt)];
