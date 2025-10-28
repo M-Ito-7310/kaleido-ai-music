@@ -239,15 +239,15 @@ export default function PrivacyPage() {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">11. お問い合わせ</h2>
           <div className="space-y-4 text-gray-600">
             <p>
-              本ポリシーに関するご質問、その他プライバシーに関するお問い合わせは、メールにてご連絡ください：
+              本ポリシーに関するご質問、その他プライバシーに関するお問い合わせは、お問い合わせフォームよりご連絡ください。
             </p>
             <div className="text-center mt-4">
-              <a
-                href="mailto:kaleidoaimusic_support@kaleidofuture.com"
-                className="text-purple-600 hover:text-purple-700 hover:underline font-mono"
+              <Link
+                href="/contact"
+                className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                kaleidoaimusic_support@kaleidofuture.com
-              </a>
+                お問い合わせフォームへ
+              </Link>
             </div>
             <p className="mt-4 text-center text-sm">
               お問い合わせへの対応には、最大14営業日かかる場合があります。
