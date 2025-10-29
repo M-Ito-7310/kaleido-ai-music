@@ -83,25 +83,12 @@ export function MiniPlayer({
     const seekbarContainer = target.closest('.seekbar-container');
     const isInSeekbarArea = seekbarContainer !== null;
 
-    console.log('[MiniPlayer] startDrag - target:', {
-      tagName: target.tagName,
-      type: (target as HTMLInputElement).type,
-      isInput,
-      isInSeekbarArea,
-      hasSeekbarContainer: !!seekbarContainer,
-      className: target.className
-    });
-
     if (!isInput && !isInSeekbarArea) {
-      console.log('[MiniPlayer] Starting player drag');
       dragControls.start(e);
-    } else {
-      console.log('[MiniPlayer] Blocked drag - clicked on seekbar area');
     }
   };
 
   const handleSeekStart = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
-    console.log('[MiniPlayer] handleSeekStart');
     e.stopPropagation();
     setIsSeekbarDragging(true);
     setSeekPosition(currentTime); // Initialize with current time
@@ -110,14 +97,12 @@ export function MiniPlayer({
   const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const time = parseFloat(e.target.value);
-    console.log('[MiniPlayer] handleSeekChange:', { time, isSeekbarDragging });
 
     if (isSeekbarDragging) {
       // ドラッグ中は視覚的な位置だけ更新
       setSeekPosition(time);
     } else {
       // クリックの場合は即座にシーク
-      console.log('[MiniPlayer] Click detected - immediate seek');
       seekTo(time);
     }
   };
@@ -125,7 +110,6 @@ export function MiniPlayer({
   const handleSeekInput = (e: React.FormEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const time = parseFloat((e.target as HTMLInputElement).value);
-    console.log('[MiniPlayer] handleSeekInput:', { time, isSeekbarDragging });
 
     // ドラッグ中は視覚的な位置だけ更新
     if (isSeekbarDragging) {
@@ -134,12 +118,10 @@ export function MiniPlayer({
   };
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
-    console.log('[MiniPlayer] handleSeekEnd:', { seekPosition, isSeekbarDragging });
     e.stopPropagation();
 
     if (isSeekbarDragging) {
       // ドラッグ終了時に実際にシーク
-      console.log('[MiniPlayer] Drag ended - seeking to:', seekPosition);
       seekTo(seekPosition);
     }
 
@@ -166,7 +148,6 @@ export function MiniPlayer({
           onChange={handleSeekChange}
           onInput={handleSeekInput}
           onPointerDownCapture={(e) => {
-            console.log('[MiniPlayer] onPointerDownCapture - stopping propagation');
             e.stopPropagation();
           }}
           onMouseDown={handleSeekStart}
@@ -174,7 +155,6 @@ export function MiniPlayer({
           onTouchStart={handleSeekStart}
           onTouchEnd={handleSeekEnd}
           onClick={(e) => {
-            console.log('[MiniPlayer] onClick');
             e.stopPropagation();
           }}
           className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"

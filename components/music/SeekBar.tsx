@@ -30,7 +30,6 @@ export function SeekBar() {
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      console.log('[SeekBar] handleMouseDown - start dragging');
       setIsDragging(true);
       const progress = getProgressFromPosition(e.clientX);
       setDragProgress(progress);
@@ -43,14 +42,12 @@ export function SeekBar() {
       if (!isDragging) return;
 
       const progress = getProgressFromPosition(e.clientX);
-      console.log('[SeekBar] handleMouseMove - updating visual position only:', progress);
       setDragProgress(progress);
     },
     [isDragging, getProgressFromPosition]
   );
 
   const handleMouseUp = useCallback(() => {
-    console.log('[SeekBar] handleMouseUp - seeking to:', dragProgress * duration);
     if (isDragging) {
       // ドラッグ終了時に実際にシーク
       seekTo(dragProgress * duration);
@@ -60,7 +57,6 @@ export function SeekBar() {
 
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      console.log('[SeekBar] handleTouchStart - start dragging');
       setIsDragging(true);
       const touch = e.touches[0];
       const progress = getProgressFromPosition(touch.clientX);
@@ -75,14 +71,12 @@ export function SeekBar() {
 
       const touch = e.touches[0];
       const progress = getProgressFromPosition(touch.clientX);
-      console.log('[SeekBar] handleTouchMove - updating visual position only:', progress);
       setDragProgress(progress);
     },
     [isDragging, getProgressFromPosition]
   );
 
   const handleTouchEnd = useCallback(() => {
-    console.log('[SeekBar] handleTouchEnd - seeking to:', dragProgress * duration);
     if (isDragging) {
       // ドラッグ終了時に実際にシーク
       seekTo(dragProgress * duration);

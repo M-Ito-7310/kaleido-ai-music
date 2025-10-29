@@ -44,27 +44,17 @@ export function GlobalPlayer() {
   // Register seek handler with PlayerContext
   useEffect(() => {
     const handleSeekFromContext = (time: number) => {
-      console.log('[GlobalPlayer] handleSeekFromContext called:', {
-        time,
-        hasAudioPlayer: !!audioPlayerRef.current,
-        currentAudioTime: audioPlayerRef.current?.getCurrentTime()
-      });
       if (audioPlayerRef.current) {
         // シーク中フラグを立てる
         isSeekingRef.current = true;
         audioPlayerRef.current.seek(time);
-        console.log('[GlobalPlayer] AudioPlayer.seek() called, new time:', audioPlayerRef.current.getCurrentTime());
 
         // 100ms後にフラグを解除（シークの完了を待つ）
         setTimeout(() => {
           isSeekingRef.current = false;
-          console.log('[GlobalPlayer] Seeking completed, resume timeupdate');
         }, 100);
-      } else {
-        console.error('[GlobalPlayer] AudioPlayer not initialized!');
       }
     };
-    console.log('[GlobalPlayer] Registering seek handler');
     registerSeekHandler(handleSeekFromContext);
   }, [registerSeekHandler]);
 
@@ -76,7 +66,6 @@ export function GlobalPlayer() {
     audioPlayerRef.current.onTimeUpdate((time) => {
       // シーク中は timeupdate を無視
       if (isSeekingRef.current) {
-        console.log('[GlobalPlayer] Ignoring timeupdate during seek:', time);
         return;
       }
       setCurrentTime(time);
