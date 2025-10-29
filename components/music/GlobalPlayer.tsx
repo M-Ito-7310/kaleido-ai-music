@@ -28,6 +28,8 @@ export function GlobalPlayer() {
     playPrevious,
     clearPlayer,
     playlist,
+    currentTime,
+    duration,
     setCurrentTime,
     setDuration,
     setIsFullScreen,
@@ -156,6 +158,11 @@ export function GlobalPlayer() {
     setIsFullScreen(true);
   };
 
+  const handleSeek = (time: number) => {
+    audioPlayerRef.current?.seek(time);
+    setCurrentTime(time);
+  };
+
   if (!currentTrack) return null;
 
   return (
@@ -170,9 +177,12 @@ export function GlobalPlayer() {
             audioUrl: currentTrack.audioUrl,
           }}
           isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
           onPlayPause={togglePlayPause}
           onNext={playlist.length > 1 ? playNext : undefined}
           onPrevious={playlist.length > 1 ? playPrevious : undefined}
+          onSeek={handleSeek}
           onClose={clearPlayer}
           onExpand={handleExpand}
         />

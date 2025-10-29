@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Play, Pause, SkipForward, SkipBack, X } from 'lucide-react';
 import { MusicTitleIcon } from './MusicTitleIcon';
+import { formatDuration } from '@/lib/utils';
 
 interface MiniPlayerProps {
   track: {
@@ -15,9 +16,12 @@ interface MiniPlayerProps {
     audioUrl: string;
   };
   isPlaying: boolean;
+  currentTime: number;
+  duration: number;
   onPlayPause: () => void;
   onNext?: () => void;
   onPrevious?: () => void;
+  onSeek: (time: number) => void;
   onClose: () => void;
   onExpand?: () => void;
 }
@@ -25,9 +29,12 @@ interface MiniPlayerProps {
 export function MiniPlayer({
   track,
   isPlaying,
+  currentTime,
+  duration,
   onPlayPause,
   onNext,
   onPrevious,
+  onSeek,
   onClose,
   onExpand,
 }: MiniPlayerProps) {
@@ -63,6 +70,12 @@ export function MiniPlayer({
     }
   };
 
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const time = parseFloat(e.target.value);
+    onSeek(time);
+  };
+
   return (
     <motion.div
       initial={{ y: 100, opacity: 0 }}
@@ -83,8 +96,29 @@ export function MiniPlayer({
       >
         {/* グローエフェクト */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-accent-DEFAULT/10 pointer-events-none" />
-        
-        <div className="relative flex items-center gap-3 p-3">
+
+        {/* シークバー */}
+        <div className="absolute top-0 left-0 right-0 px-3 pt-1">
+          <input
+            type="range"
+            min="0"
+            max={duration || 100}
+            step="0.1"
+            value={currentTime}
+            onChange={handleSeek}
+            className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+            style={{
+              accentColor: '#0284c7',
+            }}
+            aria-label="再生位置"
+            aria-valuemin={0}
+            aria-valuemax={duration}
+            aria-valuenow={currentTime}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+
+        <div className="relative flex items-center gap-3 p-3 pt-4">
           {/* アルバムアート */}
           <motion.div
             className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
