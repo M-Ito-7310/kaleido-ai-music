@@ -116,8 +116,12 @@ export function SeekBar() {
 
         {/* Draggable Thumb */}
         <motion.div
-          className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-lg ring-2 ring-primary-600 dark:ring-primary-500"
-          style={{ left: `${progress * 100}%` }}
+          className="absolute h-4 w-4 rounded-full bg-white shadow-lg ring-2 ring-primary-600 dark:ring-primary-500"
+          style={{
+            left: `${progress * 100}%`,
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
         />
