@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import { motion, useMotionValue, useTransform, PanInfo, useDragControls } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import { Play, Pause, SkipForward, SkipBack, X } from 'lucide-react';
@@ -43,6 +43,7 @@ export function MiniPlayer({
   const [seekPosition, setSeekPosition] = useState(0);
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
+  const dragControls = useDragControls();
 
   // ハプティックフィードバック
   const triggerHaptic = (pattern: number | number[]) => {
@@ -72,10 +73,22 @@ export function MiniPlayer({
     }
   };
 
+  const startDrag = (e: React.PointerEvent) => {
+    // Only start drag if not clicking on the seekbar
+    const target = e.target as HTMLElement;
+    if (target.tagName !== 'INPUT' && target.type !== 'range') {
+      console.log('[MiniPlayer] Starting player drag');
+      dragControls.start(e);
+    } else {
+      console.log('[MiniPlayer] Blocked drag - clicked on seekbar');
+    }
+  };
+
   const handleSeekStart = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
     console.log('[MiniPlayer] handleSeekStart');
     e.stopPropagation();
     setIsSeekbarDragging(true);
+    setSeekPosition(currentTime); // Initialize with current time
   };
 
   const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +101,7 @@ export function MiniPlayer({
       setSeekPosition(time);
     } else {
       // クリックの場合は即座にシーク
+      console.log('[MiniPlayer] Click detected - immediate seek');
       seekTo(time);
     }
   };
@@ -104,14 +118,17 @@ export function MiniPlayer({
   };
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
-    console.log('[MiniPlayer] handleSeekEnd:', { seekPosition });
+    console.log('[MiniPlayer] handleSeekEnd:', { seekPosition, isSeekbarDragging });
     e.stopPropagation();
 
     if (isSeekbarDragging) {
       // ドラッグ終了時に実際にシーク
+      console.log('[MiniPlayer] Drag ended - seeking to:', seekPosition);
       seekTo(seekPosition);
-      setIsSeekbarDragging(false);
     }
+
+    // 必ずリセット
+    setIsSeekbarDragging(false);
   };
 
   return (
@@ -124,10 +141,13 @@ export function MiniPlayer({
     >
       <motion.div
         drag="x"
+        dragControls={dragControls}
+        dragListener={false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={handleDragEnd}
+        onPointerDown={startDrag}
         style={{ x, opacity }}
         onClick={handleClick}
         className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl backdrop-saturate-150 shadow-2xl rounded-2xl overflow-hidden cursor-pointer pointer-events-auto border border-white/20 dark:border-gray-700/50"
