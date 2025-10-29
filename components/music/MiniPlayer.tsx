@@ -98,7 +98,7 @@ export function MiniPlayer({
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-accent-DEFAULT/10 pointer-events-none" />
 
         {/* シークバー */}
-        <div className="absolute top-0 left-0 right-0 px-3 pt-1">
+        <div className="absolute top-0 left-0 right-0 px-3 pt-1 pointer-events-auto">
           <input
             type="range"
             min="0"
@@ -106,6 +106,9 @@ export function MiniPlayer({
             step="0.1"
             value={currentTime}
             onChange={handleSeek}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
             style={{
               accentColor: '#0284c7',
@@ -114,7 +117,6 @@ export function MiniPlayer({
             aria-valuemin={0}
             aria-valuemax={duration}
             aria-valuenow={currentTime}
-            onClick={(e) => e.stopPropagation()}
           />
         </div>
 
