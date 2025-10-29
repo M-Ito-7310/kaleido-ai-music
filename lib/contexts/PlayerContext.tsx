@@ -159,12 +159,20 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [playlist, originalPlaylist, currentTrack]);
 
   const seekTo = useCallback((time: number) => {
+    console.log('[PlayerContext] seekTo called:', {
+      time,
+      hasSeekHandler: !!seekHandler,
+      currentTime
+    });
     // Call the registered seek handler (from GlobalPlayer) if available
     if (seekHandler) {
+      console.log('[PlayerContext] Calling seekHandler');
       seekHandler(time);
+    } else {
+      console.warn('[PlayerContext] No seekHandler registered!');
     }
     setCurrentTime(time);
-  }, [seekHandler]);
+  }, [seekHandler, currentTime]);
 
   const registerSeekHandler = useCallback((handler: (time: number) => void) => {
     setSeekHandler(() => handler);

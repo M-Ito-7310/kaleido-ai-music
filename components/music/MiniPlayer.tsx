@@ -73,6 +73,12 @@ export function MiniPlayer({
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const time = parseFloat((e.target as HTMLInputElement).value);
+    console.log('[MiniPlayer] handleSeek called:', {
+      eventType: e.type,
+      time,
+      currentTime,
+      duration
+    });
     seekTo(time);
   };
 
@@ -107,9 +113,23 @@ export function MiniPlayer({
             value={currentTime}
             onChange={handleSeek}
             onInput={handleSeek}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => {
+              console.log('[MiniPlayer] onMouseDown');
+              e.stopPropagation();
+            }}
+            onMouseMove={(e) => {
+              if (e.buttons === 1) {
+                console.log('[MiniPlayer] onMouseMove with button pressed');
+              }
+            }}
+            onTouchStart={(e) => {
+              console.log('[MiniPlayer] onTouchStart');
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              console.log('[MiniPlayer] onClick');
+              e.stopPropagation();
+            }}
             className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
             style={{
               accentColor: '#0284c7',

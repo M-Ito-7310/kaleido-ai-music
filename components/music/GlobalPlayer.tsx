@@ -43,8 +43,19 @@ export function GlobalPlayer() {
   // Register seek handler with PlayerContext
   useEffect(() => {
     const handleSeekFromContext = (time: number) => {
-      audioPlayerRef.current?.seek(time);
+      console.log('[GlobalPlayer] handleSeekFromContext called:', {
+        time,
+        hasAudioPlayer: !!audioPlayerRef.current,
+        currentAudioTime: audioPlayerRef.current?.getCurrentTime()
+      });
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.seek(time);
+        console.log('[GlobalPlayer] AudioPlayer.seek() called, new time:', audioPlayerRef.current.getCurrentTime());
+      } else {
+        console.error('[GlobalPlayer] AudioPlayer not initialized!');
+      }
     };
+    console.log('[GlobalPlayer] Registering seek handler');
     registerSeekHandler(handleSeekFromContext);
   }, [registerSeekHandler]);
 
