@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Play, Pause } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
@@ -28,6 +28,9 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl, musicData }: Mu
     seekTo,
   } = usePlayer();
 
+  const [isSeekbarDragging, setIsSeekbarDragging] = useState(false);
+  const [seekPosition, setSeekPosition] = useState(0);
+
   // ダイナミックカラー抽出
   const { colors } = useDynamicColors(imageUrl);
 
@@ -47,9 +50,37 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl, musicData }: Mu
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeekStart = () => {
+    setIsSeekbarDragging(true);
+  };
+
+  const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
-    seekTo(time);
+
+    if (isSeekbarDragging) {
+      // ドラッグ中は視覚的な位置だけ更新
+      setSeekPosition(time);
+    } else {
+      // クリックの場合は即座にシーク
+      seekTo(time);
+    }
+  };
+
+  const handleSeekInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const time = parseFloat((e.target as HTMLInputElement).value);
+
+    // ドラッグ中は視覚的な位置だけ更新
+    if (isSeekbarDragging) {
+      setSeekPosition(time);
+    }
+  };
+
+  const handleSeekEnd = () => {
+    if (isSeekbarDragging) {
+      // ドラッグ終了時に実際にシーク
+      seekTo(seekPosition);
+      setIsSeekbarDragging(false);
+    }
   };
 
   // カラーパレットから背景スタイルとテキストカラーを生成
@@ -61,7 +92,7 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl, musicData }: Mu
   const secondaryTextClass = textColor === 'white' ? 'text-white/80' : 'text-gray-600';
 
   // 表示する時間とdurationを決定
-  const displayTime = isCurrentTrack ? currentTime : 0;
+  const displayTime = isCurrentTrack ? (isSeekbarDragging ? seekPosition : currentTime) : 0;
   const displayDuration = isCurrentTrack ? duration : 0;
 
   return (
@@ -86,8 +117,12 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl, musicData }: Mu
           max={displayDuration || 100}
           step="0.1"
           value={displayTime}
-          onChange={handleSeek}
-          onInput={handleSeek}
+          onChange={handleSeekChange}
+          onInput={handleSeekInput}
+          onMouseDown={handleSeekStart}
+          onMouseUp={handleSeekEnd}
+          onTouchStart={handleSeekStart}
+          onTouchEnd={handleSeekEnd}
           disabled={!isCurrentTrack}
           className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           style={{ accentColor: colors?.vibrant || '#0284c7' }}

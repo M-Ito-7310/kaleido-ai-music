@@ -39,6 +39,8 @@ export function MiniPlayer({
 }: MiniPlayerProps) {
   const { seekTo } = usePlayer();
   const [isDragging, setIsDragging] = useState(false);
+  const [isSeekbarDragging, setIsSeekbarDragging] = useState(false);
+  const [seekPosition, setSeekPosition] = useState(0);
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
 
@@ -70,16 +72,46 @@ export function MiniPlayer({
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>) => {
+  const handleSeekStart = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
+    console.log('[MiniPlayer] handleSeekStart');
+    e.stopPropagation();
+    setIsSeekbarDragging(true);
+  };
+
+  const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const time = parseFloat(e.target.value);
+    console.log('[MiniPlayer] handleSeekChange:', { time, isSeekbarDragging });
+
+    if (isSeekbarDragging) {
+      // ドラッグ中は視覚的な位置だけ更新
+      setSeekPosition(time);
+    } else {
+      // クリックの場合は即座にシーク
+      seekTo(time);
+    }
+  };
+
+  const handleSeekInput = (e: React.FormEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const time = parseFloat((e.target as HTMLInputElement).value);
-    console.log('[MiniPlayer] handleSeek called:', {
-      eventType: e.type,
-      time,
-      currentTime,
-      duration
-    });
-    seekTo(time);
+    console.log('[MiniPlayer] handleSeekInput:', { time, isSeekbarDragging });
+
+    // ドラッグ中は視覚的な位置だけ更新
+    if (isSeekbarDragging) {
+      setSeekPosition(time);
+    }
+  };
+
+  const handleSeekEnd = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
+    console.log('[MiniPlayer] handleSeekEnd:', { seekPosition });
+    e.stopPropagation();
+
+    if (isSeekbarDragging) {
+      // ドラッグ終了時に実際にシーク
+      seekTo(seekPosition);
+      setIsSeekbarDragging(false);
+    }
   };
 
   return (
@@ -110,22 +142,13 @@ export function MiniPlayer({
             min="0"
             max={duration || 100}
             step="0.1"
-            value={currentTime}
-            onChange={handleSeek}
-            onInput={handleSeek}
-            onMouseDown={(e) => {
-              console.log('[MiniPlayer] onMouseDown');
-              e.stopPropagation();
-            }}
-            onMouseMove={(e) => {
-              if (e.buttons === 1) {
-                console.log('[MiniPlayer] onMouseMove with button pressed');
-              }
-            }}
-            onTouchStart={(e) => {
-              console.log('[MiniPlayer] onTouchStart');
-              e.stopPropagation();
-            }}
+            value={isSeekbarDragging ? seekPosition : currentTime}
+            onChange={handleSeekChange}
+            onInput={handleSeekInput}
+            onMouseDown={handleSeekStart}
+            onMouseUp={handleSeekEnd}
+            onTouchStart={handleSeekStart}
+            onTouchEnd={handleSeekEnd}
             onClick={(e) => {
               console.log('[MiniPlayer] onClick');
               e.stopPropagation();
@@ -137,7 +160,7 @@ export function MiniPlayer({
             aria-label="再生位置"
             aria-valuemin={0}
             aria-valuemax={duration}
-            aria-valuenow={currentTime}
+            aria-valuenow={isSeekbarDragging ? seekPosition : currentTime}
           />
         </div>
 
