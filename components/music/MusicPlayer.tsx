@@ -87,6 +87,7 @@ export function MusicPlayer({ audioUrl, title, artist, imageUrl, musicData }: Mu
           step="0.1"
           value={displayTime}
           onChange={handleSeek}
+          onInput={handleSeek}
           disabled={!isCurrentTrack}
           className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           style={{ accentColor: colors?.vibrant || '#0284c7' }}

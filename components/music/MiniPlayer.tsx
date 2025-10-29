@@ -70,9 +70,9 @@ export function MiniPlayer({
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    const time = parseFloat(e.target.value);
+    const time = parseFloat((e.target as HTMLInputElement).value);
     seekTo(time);
   };
 
@@ -106,6 +106,7 @@ export function MiniPlayer({
             step="0.1"
             value={currentTime}
             onChange={handleSeek}
+            onInput={handleSeek}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
