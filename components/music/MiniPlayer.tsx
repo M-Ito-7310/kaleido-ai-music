@@ -145,6 +145,10 @@ export function MiniPlayer({
             value={isSeekbarDragging ? seekPosition : currentTime}
             onChange={handleSeekChange}
             onInput={handleSeekInput}
+            onPointerDownCapture={(e) => {
+              console.log('[MiniPlayer] onPointerDownCapture - stopping propagation');
+              e.stopPropagation();
+            }}
             onMouseDown={handleSeekStart}
             onMouseUp={handleSeekEnd}
             onTouchStart={handleSeekStart}
