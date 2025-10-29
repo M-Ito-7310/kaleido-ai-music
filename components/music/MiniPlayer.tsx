@@ -155,6 +155,39 @@ export function MiniPlayer({
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
       className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none"
     >
+      {/* シークバー - 独立したレイヤー（最前面） */}
+      <div className="seekbar-container absolute top-0 left-0 right-0 px-7 py-2 pointer-events-auto z-10">
+        <input
+          type="range"
+          min="0"
+          max={duration || 100}
+          step="0.1"
+          value={isSeekbarDragging ? seekPosition : currentTime}
+          onChange={handleSeekChange}
+          onInput={handleSeekInput}
+          onPointerDownCapture={(e) => {
+            console.log('[MiniPlayer] onPointerDownCapture - stopping propagation');
+            e.stopPropagation();
+          }}
+          onMouseDown={handleSeekStart}
+          onMouseUp={handleSeekEnd}
+          onTouchStart={handleSeekStart}
+          onTouchEnd={handleSeekEnd}
+          onClick={(e) => {
+            console.log('[MiniPlayer] onClick');
+            e.stopPropagation();
+          }}
+          className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+          style={{
+            accentColor: '#0284c7',
+          }}
+          aria-label="再生位置"
+          aria-valuemin={0}
+          aria-valuemax={duration}
+          aria-valuenow={isSeekbarDragging ? seekPosition : currentTime}
+        />
+      </div>
+
       <motion.div
         drag="x"
         dragControls={dragControls}
@@ -170,41 +203,7 @@ export function MiniPlayer({
       >
         {/* グローエフェクト */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-accent-DEFAULT/10 pointer-events-none" />
-
-        {/* シークバー */}
-        <div className="seekbar-container absolute top-0 left-0 right-0 px-3 py-2 pointer-events-auto">
-          <input
-            type="range"
-            min="0"
-            max={duration || 100}
-            step="0.1"
-            value={isSeekbarDragging ? seekPosition : currentTime}
-            onChange={handleSeekChange}
-            onInput={handleSeekInput}
-            onPointerDownCapture={(e) => {
-              console.log('[MiniPlayer] onPointerDownCapture - stopping propagation');
-              e.stopPropagation();
-            }}
-            onMouseDown={handleSeekStart}
-            onMouseUp={handleSeekEnd}
-            onTouchStart={handleSeekStart}
-            onTouchEnd={handleSeekEnd}
-            onClick={(e) => {
-              console.log('[MiniPlayer] onClick');
-              e.stopPropagation();
-            }}
-            className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-            style={{
-              accentColor: '#0284c7',
-            }}
-            aria-label="再生位置"
-            aria-valuemin={0}
-            aria-valuemax={duration}
-            aria-valuenow={isSeekbarDragging ? seekPosition : currentTime}
-          />
-        </div>
-
-        <div className="relative flex items-center gap-3 p-3 pt-6">
+        <div className="relative flex items-center gap-3 p-3 pt-4">
           {/* アルバムアート */}
           <motion.div
             className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
