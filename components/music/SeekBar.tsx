@@ -120,7 +120,8 @@ export function SeekBar() {
           style={{
             left: `${progress * 100}%`,
             top: '50%',
-            transform: 'translate(-50%, -50%)'
+            x: '-50%',
+            y: '-50%'
           }}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
