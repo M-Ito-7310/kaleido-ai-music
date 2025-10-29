@@ -76,9 +76,20 @@ export function MiniPlayer({
   const startDrag = (e: React.PointerEvent) => {
     // Only start drag if not clicking on the seekbar
     const target = e.target as HTMLElement;
-    const isInput = target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'range';
 
-    if (!isInput) {
+    // Check if clicked element is the input or inside the seekbar container
+    const isInput = target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'range';
+    const isInSeekbarContainer = target.closest('input[type="range"]') !== null;
+
+    console.log('[MiniPlayer] startDrag - target:', {
+      tagName: target.tagName,
+      type: (target as HTMLInputElement).type,
+      isInput,
+      isInSeekbarContainer,
+      className: target.className
+    });
+
+    if (!isInput && !isInSeekbarContainer) {
       console.log('[MiniPlayer] Starting player drag');
       dragControls.start(e);
     } else {
