@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -81,7 +81,7 @@ export function SeekBar() {
   }, []);
 
   // Add/remove global event listeners for drag
-  useCallback(() => {
+  useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
