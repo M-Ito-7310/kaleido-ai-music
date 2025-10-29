@@ -74,26 +74,29 @@ export function MiniPlayer({
   };
 
   const startDrag = (e: React.PointerEvent) => {
-    // Only start drag if not clicking on the seekbar
+    // Only start drag if not clicking on the seekbar area
     const target = e.target as HTMLElement;
 
     // Check if clicked element is the input or inside the seekbar container
     const isInput = target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'range';
-    const isInSeekbarContainer = target.closest('input[type="range"]') !== null;
+    // Check if click is within the seekbar container div
+    const seekbarContainer = target.closest('.seekbar-container');
+    const isInSeekbarArea = seekbarContainer !== null;
 
     console.log('[MiniPlayer] startDrag - target:', {
       tagName: target.tagName,
       type: (target as HTMLInputElement).type,
       isInput,
-      isInSeekbarContainer,
+      isInSeekbarArea,
+      hasSeekbarContainer: !!seekbarContainer,
       className: target.className
     });
 
-    if (!isInput && !isInSeekbarContainer) {
+    if (!isInput && !isInSeekbarArea) {
       console.log('[MiniPlayer] Starting player drag');
       dragControls.start(e);
     } else {
-      console.log('[MiniPlayer] Blocked drag - clicked on seekbar');
+      console.log('[MiniPlayer] Blocked drag - clicked on seekbar area');
     }
   };
 
@@ -169,7 +172,7 @@ export function MiniPlayer({
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-accent-DEFAULT/10 pointer-events-none" />
 
         {/* シークバー */}
-        <div className="absolute top-0 left-0 right-0 px-3 pt-1 pointer-events-auto">
+        <div className="seekbar-container absolute top-0 left-0 right-0 px-3 py-2 pointer-events-auto">
           <input
             type="range"
             min="0"
@@ -201,7 +204,7 @@ export function MiniPlayer({
           />
         </div>
 
-        <div className="relative flex items-center gap-3 p-3 pt-4">
+        <div className="relative flex items-center gap-3 p-3 pt-6">
           {/* アルバムアート */}
           <motion.div
             className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 shadow-lg ring-1 ring-white/10"
