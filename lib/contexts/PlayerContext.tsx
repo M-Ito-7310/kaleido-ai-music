@@ -30,6 +30,7 @@ interface PlayerContextType {
   setRepeatMode: (mode: RepeatMode) => void;
   toggleShuffle: () => void;
   seekTo: (time: number) => void;
+  registerSeekHandler: (handler: (time: number) => void) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -45,6 +46,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
   const [shuffleEnabled, setShuffleEnabled] = useState(false);
+  const [seekHandler, setSeekHandler] = useState<((time: number) => void) | null>(null);
 
   // Track play in history when a new track starts
   useEffect(() => {
@@ -157,7 +159,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [playlist, originalPlaylist, currentTrack]);
 
   const seekTo = useCallback((time: number) => {
+    // Call the registered seek handler (from GlobalPlayer) if available
+    if (seekHandler) {
+      seekHandler(time);
+    }
     setCurrentTime(time);
+  }, [seekHandler]);
+
+  const registerSeekHandler = useCallback((handler: (time: number) => void) => {
+    setSeekHandler(() => handler);
   }, []);
 
   return (
@@ -185,6 +195,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         setRepeatMode,
         toggleShuffle,
         seekTo,
+        registerSeekHandler,
       }}
     >
       {children}

@@ -34,10 +34,19 @@ export function GlobalPlayer() {
     setDuration,
     setIsFullScreen,
     repeatMode,
+    registerSeekHandler,
   } = usePlayer();
 
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Register seek handler with PlayerContext
+  useEffect(() => {
+    const handleSeekFromContext = (time: number) => {
+      audioPlayerRef.current?.seek(time);
+    };
+    registerSeekHandler(handleSeekFromContext);
+  }, [registerSeekHandler]);
 
   // AudioPlayerの初期化とクリーンアップ
   useEffect(() => {
@@ -158,11 +167,6 @@ export function GlobalPlayer() {
     setIsFullScreen(true);
   };
 
-  const handleSeek = (time: number) => {
-    audioPlayerRef.current?.seek(time);
-    setCurrentTime(time);
-  };
-
   if (!currentTrack) return null;
 
   return (
@@ -182,7 +186,6 @@ export function GlobalPlayer() {
           onPlayPause={togglePlayPause}
           onNext={playlist.length > 1 ? playNext : undefined}
           onPrevious={playlist.length > 1 ? playPrevious : undefined}
-          onSeek={handleSeek}
           onClose={clearPlayer}
           onExpand={handleExpand}
         />

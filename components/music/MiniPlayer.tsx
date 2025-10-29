@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Play, Pause, SkipForward, SkipBack, X } from 'lucide-react';
 import { MusicTitleIcon } from './MusicTitleIcon';
 import { formatDuration } from '@/lib/utils';
+import { usePlayer } from '@/lib/contexts/PlayerContext';
 
 interface MiniPlayerProps {
   track: {
@@ -21,7 +22,6 @@ interface MiniPlayerProps {
   onPlayPause: () => void;
   onNext?: () => void;
   onPrevious?: () => void;
-  onSeek: (time: number) => void;
   onClose: () => void;
   onExpand?: () => void;
 }
@@ -34,10 +34,10 @@ export function MiniPlayer({
   onPlayPause,
   onNext,
   onPrevious,
-  onSeek,
   onClose,
   onExpand,
 }: MiniPlayerProps) {
+  const { seekTo } = usePlayer();
   const [isDragging, setIsDragging] = useState(false);
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
@@ -73,7 +73,7 @@ export function MiniPlayer({
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const time = parseFloat(e.target.value);
-    onSeek(time);
+    seekTo(time);
   };
 
   return (
