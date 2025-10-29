@@ -39,6 +39,7 @@ export function GlobalPlayer() {
 
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isSeekingRef = useRef(false); // シーク中フラグ
 
   // Register seek handler with PlayerContext
   useEffect(() => {
@@ -49,8 +50,16 @@ export function GlobalPlayer() {
         currentAudioTime: audioPlayerRef.current?.getCurrentTime()
       });
       if (audioPlayerRef.current) {
+        // シーク中フラグを立てる
+        isSeekingRef.current = true;
         audioPlayerRef.current.seek(time);
         console.log('[GlobalPlayer] AudioPlayer.seek() called, new time:', audioPlayerRef.current.getCurrentTime());
+
+        // 100ms後にフラグを解除（シークの完了を待つ）
+        setTimeout(() => {
+          isSeekingRef.current = false;
+          console.log('[GlobalPlayer] Seeking completed, resume timeupdate');
+        }, 100);
       } else {
         console.error('[GlobalPlayer] AudioPlayer not initialized!');
       }
@@ -65,6 +74,11 @@ export function GlobalPlayer() {
 
     // Setup timeupdate event listener
     audioPlayerRef.current.onTimeUpdate((time) => {
+      // シーク中は timeupdate を無視
+      if (isSeekingRef.current) {
+        console.log('[GlobalPlayer] Ignoring timeupdate during seek:', time);
+        return;
+      }
       setCurrentTime(time);
       const duration = audioPlayerRef.current?.getDuration() || 0;
       updatePositionState(duration, time);
