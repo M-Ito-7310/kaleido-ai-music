@@ -88,6 +88,7 @@ const createMusicSchema = z.object({
   tags: z.array(z.string()).default([]),
   aiPlatform: z.string().max(100).nullable().optional(),
   shareLink: z.string().url().nullable().optional().or(z.literal('')),
+  youtubeUrl: z.string().url().nullable().optional().or(z.literal('')),
   genre: z.string().max(100).nullable().optional(),
   mood: z.string().max(100).nullable().optional(),
   tempo: z.number().optional(),
