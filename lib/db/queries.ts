@@ -133,8 +133,8 @@ export async function getMusicById(id: number) {
   const rawResult = await db.execute(sql`
     SELECT id, title, artist, description, audio_url as "audioUrl", image_url as "imageUrl",
            duration, file_size as "fileSize", category, tags, ai_platform as "aiPlatform",
-           share_link as "shareLink", genre, mood, tempo, play_count as "playCount",
-           download_count as "downloadCount", is_published as "isPublished",
+           share_link as "shareLink", youtube_url as "youtubeUrl", genre, mood, tempo,
+           play_count as "playCount", download_count as "downloadCount", is_published as "isPublished",
            created_at as "createdAt", updated_at as "updatedAt"
     FROM music WHERE id = ${id} LIMIT 1
   `);
