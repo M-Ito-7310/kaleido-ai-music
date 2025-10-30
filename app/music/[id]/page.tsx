@@ -183,7 +183,13 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
               カメラやブラウザでQRコードをスキャンしてアクセスできます。
               アプリ内で開いた場合は、リンクをタップして外部ブラウザで開いてください。
             </p>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+            <div className={`grid gap-8 max-w-5xl mx-auto ${
+              music.shareLink && music.youtubeUrl
+                ? 'sm:grid-cols-2 lg:grid-cols-3'
+                : music.shareLink || music.youtubeUrl
+                ? 'sm:grid-cols-2'
+                : 'sm:grid-cols-1'
+            }`}>
               {/* 楽曲ページQRコード */}
               <div className="flex justify-center">
                 <QRCodeDisplay
