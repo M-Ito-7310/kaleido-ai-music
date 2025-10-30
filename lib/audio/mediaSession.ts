@@ -34,49 +34,57 @@ export function setupMediaSession(metadata: MediaMetadata, handlers: MediaSessio
     return;
   }
 
-  // メタデータの設定
-  navigator.mediaSession.metadata = new window.MediaMetadata({
-    title: metadata.title,
-    artist: metadata.artist,
-    album: metadata.album || '',
-    artwork: metadata.artwork || generateArtwork(metadata.title),
-  });
-
-  // アクションハンドラーの設定
-  const actions: Array<{
-    action: MediaSessionAction;
-    handler?: MediaSessionActionHandler;
-  }> = [
-    { action: 'play', handler: handlers.onPlay },
-    { action: 'pause', handler: handlers.onPause },
-    { action: 'seekbackward', handler: handlers.onSeekBackward },
-    { action: 'seekforward', handler: handlers.onSeekForward },
-    { action: 'previoustrack', handler: handlers.onPreviousTrack },
-    { action: 'nexttrack', handler: handlers.onNextTrack },
-  ];
-
-  // seektoハンドラーは特別な処理が必要
-  if (handlers.onSeekTo) {
-    actions.push({
-      action: 'seekto',
-      handler: (details) => {
-        if (details.seekTime !== undefined && handlers.onSeekTo) {
-          handlers.onSeekTo(details.seekTime);
-        }
-      },
+  try {
+    // メタデータの設定
+    navigator.mediaSession.metadata = new window.MediaMetadata({
+      title: metadata.title,
+      artist: metadata.artist,
+      album: metadata.album || '',
+      artwork: metadata.artwork || generateArtwork(metadata.title),
     });
-  }
 
-  // すべてのアクションを登録
-  actions.forEach(({ action, handler }) => {
-    try {
-      if (handler) {
-        navigator.mediaSession.setActionHandler(action, handler);
-      }
-    } catch (error) {
-      console.warn(`The action "${action}" is not supported by this browser`, error);
+    // iOS Safari対応: まず再生状態を明示的に設定
+    navigator.mediaSession.playbackState = 'playing';
+
+    // アクションハンドラーの設定
+    const actions: Array<{
+      action: MediaSessionAction;
+      handler?: MediaSessionActionHandler;
+    }> = [
+      { action: 'play', handler: handlers.onPlay },
+      { action: 'pause', handler: handlers.onPause },
+      { action: 'seekbackward', handler: handlers.onSeekBackward },
+      { action: 'seekforward', handler: handlers.onSeekForward },
+      { action: 'previoustrack', handler: handlers.onPreviousTrack },
+      { action: 'nexttrack', handler: handlers.onNextTrack },
+    ];
+
+    // seektoハンドラーは特別な処理が必要
+    if (handlers.onSeekTo) {
+      actions.push({
+        action: 'seekto',
+        handler: (details) => {
+          if (details.seekTime !== undefined && handlers.onSeekTo) {
+            handlers.onSeekTo(details.seekTime);
+          }
+        },
+      });
     }
-  });
+
+    // すべてのアクションを登録
+    actions.forEach(({ action, handler }) => {
+      try {
+        if (handler) {
+          navigator.mediaSession.setActionHandler(action, handler);
+        }
+      } catch (error) {
+        // iOS Safariでサポートされていないアクションは無視
+        console.debug(`The action "${action}" is not supported by this browser`);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to setup MediaSession:', error);
+  }
 }
 
 /**

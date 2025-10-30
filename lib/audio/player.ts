@@ -23,27 +23,47 @@ export class AudioPlayer {
       this.audioElement.crossOrigin = 'anonymous'; // Enable CORS for Web Audio API
       this.audioElement.preload = 'auto';
 
+      // iOS Safari specific settings for background playback
+      // Disable picture-in-picture to improve compatibility
+      (this.audioElement as any).disablePictureInPicture = true;
+
+      // Set playsinline to prevent fullscreen on iOS
+      this.audioElement.setAttribute('playsinline', '');
+
+      // Important: Set these properties to allow background playback on iOS
+      this.audioElement.setAttribute('webkit-playsinline', '');
+
       // Add event listeners
       this.audioElement.addEventListener('ended', this.handleEnded);
       this.audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata);
 
-      // Create Web Audio API context
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Detect iOS Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-      // Create source node from audio element
-      this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
+      // Only use Web Audio API on non-iOS devices
+      // iOS Safari has issues with AudioContext in background
+      if (!isIOS) {
+        // Create Web Audio API context
+        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
 
-      // Create gain node for volume control
-      this.gainNode = this.audioContext.createGain();
+        // Create source node from audio element
+        this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
 
-      // Create audio processor for effects
-      this.audioProcessor = new AudioProcessor(this.audioContext);
+        // Create gain node for volume control
+        this.gainNode = this.audioContext.createGain();
 
-      // Connect: sourceNode → gainNode → destination
-      // Note: AudioProcessor is kept for future effects implementation
-      // Currently connecting directly to destination for stable playback
-      this.sourceNode.connect(this.gainNode);
-      this.gainNode.connect(this.audioContext.destination);
+        // Create audio processor for effects
+        this.audioProcessor = new AudioProcessor(this.audioContext);
+
+        // Connect: sourceNode → gainNode → destination
+        // Note: AudioProcessor is kept for future effects implementation
+        // Currently connecting directly to destination for stable playback
+        this.sourceNode.connect(this.gainNode);
+        this.gainNode.connect(this.audioContext.destination);
+      } else {
+        // iOS: Use HTMLAudioElement directly without Web Audio API
+        console.log('iOS detected: Using HTMLAudioElement without Web Audio API');
+      }
     }
   }
 
@@ -145,14 +165,14 @@ export class AudioPlayer {
   }
 
   async play(): Promise<void> {
-    if (!this.audioElement || !this.audioContext) return;
+    if (!this.audioElement) return;
 
-    // Resume audio context if suspended and WAIT for it to be running
-    if (this.audioContext.state === 'suspended') {
+    // Resume audio context if suspended and WAIT for it to be running (non-iOS only)
+    if (this.audioContext && this.audioContext.state === 'suspended') {
       await this.audioContext.resume();
     }
 
-    // Play the audio (AudioContext is now guaranteed to be running)
+    // Play the audio
     try {
       await this.audioElement.play();
 
@@ -160,6 +180,7 @@ export class AudioPlayer {
       this.startTimeTracking();
     } catch (error) {
       // Playback failed - user may need to interact with page first
+      console.error('Failed to play audio:', error);
       throw error;
     }
   }
@@ -182,11 +203,16 @@ export class AudioPlayer {
   }
 
   setVolume(volume: number): void {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+
+    // Set volume on gain node (non-iOS only)
     if (this.gainNode) {
-      this.gainNode.gain.value = Math.max(0, Math.min(1, volume));
+      this.gainNode.gain.value = clampedVolume;
     }
+
+    // Always set volume on audio element (works on all platforms including iOS)
     if (this.audioElement) {
-      this.audioElement.volume = Math.max(0, Math.min(1, volume));
+      this.audioElement.volume = clampedVolume;
     }
   }
 
