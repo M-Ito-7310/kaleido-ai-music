@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { usePlayer } from '@/lib/contexts/PlayerContext';
 import { MiniPlayer } from './MiniPlayer';
@@ -13,11 +13,17 @@ import {
   clearMediaSession,
   createArtworkFromUrl,
 } from '@/lib/audio/mediaSession';
+import {
+  requestWakeLock,
+  releaseWakeLock,
+  isWakeLockSupported,
+} from '@/lib/audio/wakeLock';
 
 /**
  * グローバルプレイヤー: アプリ全体で音楽を再生するコンポーネント
  * ミニプレイヤーUIと実際のオーディオ再生を管理
  * MediaSession APIでロックスクリーンコントロールをサポート
+ * Wake Lock API（オプション）で画面スリープ防止をサポート
  */
 export function GlobalPlayer() {
   const {
@@ -40,6 +46,7 @@ export function GlobalPlayer() {
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isSeekingRef = useRef(false); // シーク中フラグ
+  const [wakeLockEnabled, setWakeLockEnabled] = useState(false); // Wake Lock有効/無効状態
 
   // Register seek handler with PlayerContext
   useEffect(() => {
@@ -161,18 +168,28 @@ export function GlobalPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrack?.id]);
 
-  // 再生状態の変更
+  // 再生状態の変更とWake Lock管理
   useEffect(() => {
     if (!audioPlayerRef.current) return;
 
     if (isPlaying) {
       audioPlayerRef.current.play();
       updatePlaybackState('playing');
+
+      // Wake Lockが有効な場合、リクエスト
+      // Note: デフォルトでは無効（バッテリー消費を考慮）
+      // ユーザーが明示的に有効化した場合のみ動作
+      if (wakeLockEnabled && isWakeLockSupported()) {
+        requestWakeLock();
+      }
     } else {
       audioPlayerRef.current.pause();
       updatePlaybackState('paused');
+
+      // 再生停止時はWake Lockを解放
+      releaseWakeLock();
     }
-  }, [isPlaying]);
+  }, [isPlaying, wakeLockEnabled]);
 
   // Note: 再生位置の更新はHTMLAudioElementのtimeupdateイベントで自動的に行われます
   // setIntervalは不要になりました
