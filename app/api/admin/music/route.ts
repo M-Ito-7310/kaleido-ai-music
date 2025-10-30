@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { validateSession } from '@/lib/auth/session';
 import { getMusicList, createMusic } from '@/lib/db/queries';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
@@ -110,6 +111,12 @@ export async function POST(request: NextRequest) {
       ...validatedData,
       isPublished: 1,
     });
+
+    // 関連ページのキャッシュを無効化
+    revalidatePath('/', 'layout'); // すべてのページを再検証
+    revalidatePath('/');
+    revalidatePath('/library');
+    revalidatePath('/admin/music');
 
     return NextResponse.json(
       {

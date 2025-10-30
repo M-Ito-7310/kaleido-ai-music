@@ -90,7 +90,7 @@ export async function getMusicCount(filter: Omit<MusicFilter, 'limit' | 'offset'
     search,
   } = filter;
 
-  // WHERE条件を構築
+  // WHERE条件を構築（生のSQLクエリを使用してキャッシュ回避）
   const conditions = [eq(music.isPublished, 1)];
 
   // カテゴリフィルター
