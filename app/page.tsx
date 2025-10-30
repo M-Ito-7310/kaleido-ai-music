@@ -5,6 +5,8 @@ import { QRCodeDisplay } from '@/components/qr/QRCodeDisplay';
 import { MusicCard } from '@/components/music/MusicCard';
 import { getMusicList } from '@/lib/db/queries';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // 新着3曲を取得
   const latestMusic = await getMusicList({

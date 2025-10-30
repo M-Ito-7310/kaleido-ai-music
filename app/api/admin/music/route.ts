@@ -105,8 +105,11 @@ export async function POST(request: NextRequest) {
     // バリデーション
     const validatedData = createMusicSchema.parse(body);
 
-    // 音楽を作成
-    const newMusic = await createMusic(validatedData);
+    // 音楽を作成（isPublishedを明示的に1に設定してすぐに公開）
+    const newMusic = await createMusic({
+      ...validatedData,
+      isPublished: 1,
+    });
 
     return NextResponse.json(
       {

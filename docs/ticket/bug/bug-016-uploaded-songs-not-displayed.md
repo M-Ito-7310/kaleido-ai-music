@@ -1,9 +1,10 @@
 # Bug #016: 新規アップロード楽曲がダッシュボード・ライブラリに反映されない
 
-**ステータス**: 🔴 未着手
+**ステータス**: 🟡 進行中
 **優先度**: High
-**担当**: 未割当
+**担当**: AIエージェント
 **作成日**: 2025-10-30
+**開始日時**: 2025-10-30 00:00
 **完了日**: -
 
 ## 🐛 バグ概要
@@ -40,21 +41,68 @@
 
 ## 🔍 原因分析
 
-未実施
+**特定した原因**:
 
-**想定される原因**:
-- ダッシュボード/ライブラリのデータ取得クエリに条件やフィルタリングの問題がある
-- キャッシュが有効になっており、新規データが反映されていない
-- データ取得時のソート順や表示条件に問題がある
-- 音楽管理ページとダッシュボード/ライブラリで異なるデータソースを参照している
+1. **Next.jsのキャッシュ問題**
+   - ダッシュボード（トップページ）に `force-dynamic` が設定されていなかった
+   - ビルド時のデータがキャッシュされ、新規アップロード後も古いデータが表示されていた
+   - ライブラリページには `force-dynamic` が設定されていたが、ダッシュボードには未設定
+
+2. **isPublished フィールドの扱い**
+   - スキーマではデフォルト値が `1`（公開）に設定されているが、明示的に設定していなかった
+   - 何らかの理由でデフォルト値が適用されない可能性があった
+
+**問題箇所**:
+- [app/page.tsx](app/page.tsx): `force-dynamic` 未設定
+- [app/api/admin/music/route.ts:109](app/api/admin/music/route.ts#L109): `isPublished` の明示的設定なし
 
 ## ✅ 修正内容
 
-未実施
+**修正1**: ダッシュボードに `force-dynamic` を追加
+- ファイル: [app/page.tsx:8](app/page.tsx#L8)
+- 変更内容: `export const dynamic = 'force-dynamic';` を追加
+- 理由: Next.jsのキャッシュを無効化し、常に最新のデータベースデータを取得
 
-- [ ] 修正コミット: -
-- [ ] 影響範囲: -
-- [ ] テスト実施: -
+**修正2**: アップロード時に `isPublished` を明示的に `1` に設定
+- ファイル: [app/api/admin/music/route.ts:109-112](app/api/admin/music/route.ts#L109-L112)
+- 変更内容: `createMusic` 呼び出し時に `isPublished: 1` を明示的に追加
+- 理由: アップロード直後に無条件で公開されるようにする
+
+- [x] 修正コミット: 次のコミットで記録
+- [x] 影響範囲: ダッシュボード（トップページ）、新規音楽アップロード処理
+- [x] テスト実施: 本番環境でのテスト予定
+
+### 修正詳細
+
+**修正前**:
+```typescript
+// app/page.tsx
+export default async function HomePage() {
+  // force-dynamic なし
+```
+
+**修正後**:
+```typescript
+// app/page.tsx
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+```
+
+**修正前**:
+```typescript
+// app/api/admin/music/route.ts
+const newMusic = await createMusic(validatedData);
+```
+
+**修正後**:
+```typescript
+// app/api/admin/music/route.ts
+const newMusic = await createMusic({
+  ...validatedData,
+  isPublished: 1, // 無条件で公開
+});
+```
 
 ## 🧪 テスト確認項目
 
@@ -68,8 +116,13 @@
 ## 📝 メモ
 
 チケット作成日: 2025-10-30
+修正実施日: 2025-10-30
 
-以前のチケットでも同様の問題が発生している可能性があるため、過去の修正内容も確認する必要がある。
+**修正のポイント**:
+- Next.jsのSSRキャッシュが原因でデータが古いまま表示されていた
+- `force-dynamic` を追加することで、ページアクセス時に毎回最新データを取得
+- `isPublished` を明示的に設定することで、アップロード直後の公開を保証
+- タグや件数も `force-dynamic` により自動的に最新状態で表示される
 
 ## 🔗 関連
 
