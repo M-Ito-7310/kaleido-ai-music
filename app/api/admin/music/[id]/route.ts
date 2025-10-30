@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { validateSession } from '@/lib/auth/session';
 import { getMusicById, updateMusic, deleteMusic } from '@/lib/db/queries';
 import type { ApiResponse } from '@/types/api';
@@ -130,6 +131,13 @@ export async function PATCH(
     // 音楽を更新
     const updatedMusic = await updateMusic(musicId, validatedData);
 
+    // 関連ページのキャッシュを無効化（タグや件数、カテゴリが変更された可能性があるため）
+    revalidatePath('/', 'layout'); // すべてのページを再検証
+    revalidatePath('/');
+    revalidatePath('/library');
+    revalidatePath('/admin/music');
+    revalidatePath(`/music/${musicId}`); // 詳細ページも更新
+
     return NextResponse.json({
       success: true,
       data: updatedMusic,
@@ -195,6 +203,12 @@ export async function DELETE(
 
     // 音楽を削除
     await deleteMusic(musicId);
+
+    // 関連ページのキャッシュを無効化（件数、タグ、カテゴリが変更されるため）
+    revalidatePath('/', 'layout'); // すべてのページを再検証
+    revalidatePath('/');
+    revalidatePath('/library');
+    revalidatePath('/admin/music');
 
     return NextResponse.json({
       success: true,
