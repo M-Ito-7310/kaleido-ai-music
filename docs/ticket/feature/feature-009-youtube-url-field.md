@@ -152,7 +152,7 @@
 - API修正（バリデーションスキーマ追加）
 - データ取得修正（getMusicById関数）
 
-Git commit: (後で記録)
+Git commit: 437267803b513d2e08c837a3ba41f50f7fdd2a75
 
 ## 🔗 関連
 
