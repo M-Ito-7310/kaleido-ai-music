@@ -25,6 +25,7 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
     mood: '',
     aiPlatform: '',
     shareLink: '',
+    youtubeUrl: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,6 +80,7 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
       if (formData.mood) musicData.mood = formData.mood;
       if (formData.aiPlatform) musicData.aiPlatform = formData.aiPlatform;
       if (formData.shareLink) musicData.shareLink = formData.shareLink;
+      if (formData.youtubeUrl) musicData.youtubeUrl = formData.youtubeUrl;
 
       // 3. データベースに保存（管理者専用API使用）
       const createRes = await fetch('/api/admin/music', {
@@ -271,6 +273,20 @@ export function AdminMusicUploadForm({ categories }: AdminMusicUploadFormProps) 
           value={formData.shareLink}
           onChange={(e) => setFormData({ ...formData, shareLink: e.target.value })}
           placeholder="例: https://suno.com/song/..."
+          className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        />
+      </div>
+
+      {/* YouTube URL */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          YouTube URL（任意）
+        </label>
+        <input
+          type="url"
+          value={formData.youtubeUrl}
+          onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+          placeholder="例: https://www.youtube.com/watch?v=..."
           className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
         />
       </div>

@@ -25,6 +25,7 @@ export const music = pgTable(
     tags: json('tags').$type<string[]>().default([]),
     aiPlatform: varchar('ai_platform', { length: 100 }), // "Suno AI", "Udio" など
     shareLink: text('share_link'), // AI音楽サービスの共有リンク（任意）
+    youtubeUrl: text('youtube_url'), // YouTube動画のURL（任意）
     genre: varchar('genre', { length: 100 }),
     mood: varchar('mood', { length: 100 }),
     tempo: integer('tempo'), // BPM

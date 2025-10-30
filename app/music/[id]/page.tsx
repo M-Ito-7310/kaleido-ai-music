@@ -134,6 +134,24 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                 </div>
               )}
 
+              {/* YouTube URL */}
+              {music.youtubeUrl && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    YouTube
+                  </h3>
+                  <a
+                    href={music.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:underline transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    <span>YouTubeで視聴</span>
+                  </a>
+                </div>
+              )}
+
               {/* プレイヤー */}
               <div className="mb-6 flex-1 flex items-end">
                 <MusicPlayer
@@ -165,7 +183,7 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
               カメラやブラウザでQRコードをスキャンしてアクセスできます。
               アプリ内で開いた場合は、リンクをタップして外部ブラウザで開いてください。
             </p>
-            <div className="grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
               {/* 楽曲ページQRコード */}
               <div className="flex justify-center">
                 <QRCodeDisplay
@@ -182,6 +200,17 @@ export default async function MusicDetailPage({ params }: MusicDetailPageProps) 
                     value={music.shareLink.trim()}
                     size={180}
                     label="生成元のサービス"
+                  />
+                </div>
+              )}
+
+              {/* YouTube URLのQRコード */}
+              {music.youtubeUrl && (
+                <div className="flex justify-center">
+                  <QRCodeDisplay
+                    value={music.youtubeUrl.trim()}
+                    size={180}
+                    label="YouTube"
                   />
                 </div>
               )}

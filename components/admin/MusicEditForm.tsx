@@ -29,6 +29,7 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
     mood: music.mood || '',
     aiPlatform: music.aiPlatform || '',
     shareLink: music.shareLink || '',
+    youtubeUrl: music.youtubeUrl || '',
   });
 
   // 画像ファイル選択時のプレビュー
@@ -84,6 +85,7 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
       if (formData.mood) updateData.mood = formData.mood;
       if (formData.aiPlatform) updateData.aiPlatform = formData.aiPlatform;
       if (formData.shareLink) updateData.shareLink = formData.shareLink;
+      if (formData.youtubeUrl) updateData.youtubeUrl = formData.youtubeUrl;
 
       const updateRes = await fetch(`/api/admin/music/${music.id}`, {
         method: 'PATCH',
@@ -268,6 +270,20 @@ export function MusicEditForm({ music, categories }: MusicEditFormProps) {
             value={formData.shareLink}
             onChange={(e) => setFormData({ ...formData, shareLink: e.target.value })}
             placeholder="例: https://suno.com/song/..."
+            className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+        </div>
+
+        {/* YouTube URL */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            YouTube URL（任意）
+          </label>
+          <input
+            type="url"
+            value={formData.youtubeUrl}
+            onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+            placeholder="例: https://www.youtube.com/watch?v=..."
             className="block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </div>
