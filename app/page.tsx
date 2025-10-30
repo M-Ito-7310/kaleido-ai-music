@@ -215,6 +215,57 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* YouTubeチャンネルセクション */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-red-50 dark:from-red-950 to-orange-50 dark:to-orange-950">
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="text-center">
+            <div className="flex justify-center mb-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-600">
+                <svg className="h-10 w-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl font-display">
+              YouTubeチャンネルをチェック
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Kaleido FutureのYouTubeチャンネルで、AI音楽の最新動画をご覧いただけます。
+              チャンネル登録して、最新情報をチェックしましょう！
+            </p>
+            <div className="mt-10 flex flex-col items-center gap-8">
+              <a
+                href="https://www.youtube.com/@KaleidoFuture"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 dark:from-red-500 dark:to-red-400 px-6 py-3 text-base font-semibold text-white shadow-sm hover:from-red-500 hover:to-red-400 dark:hover:from-red-400 dark:hover:to-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all"
+              >
+                YouTubeチャンネルを見る
+                <ExternalLink className="h-5 w-5" />
+              </a>
+
+              {/* QRコード */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <QrCode className="h-5 w-5" />
+                  <span className="text-sm font-semibold">スマートフォンでアクセス</span>
+                </div>
+                <QRCodeDisplay
+                  value="https://www.youtube.com/@KaleidoFuture"
+                  size={180}
+                  label="Kaleido Future YouTube"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 装飾 */}
+        <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+          <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-red-300 to-orange-300 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
+        </div>
+      </section>
+
       {/* ホームページQRコードセクション */}
       <section className="py-24 sm:py-32 bg-gray-50 dark:bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
